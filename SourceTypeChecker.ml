@@ -15,7 +15,7 @@ let typecheck_main p =
   (* L'analyse de tout le programme se fait dans le contexte de la même
      table de symboles. On la définit ici puis on définit les fonctions
      d'analyse récursives dans ce contexte. *)
-  let symb_tbl = p.locals in
+  let symb_tbl = ref Symb_Tbl.empty in
 
   (* [typecheck_block/instruction] vérifient le bon typage des instructions
      et lèvent une exception en cas de problème. *)
@@ -25,9 +25,10 @@ let typecheck_main p =
   (* typecheck_instruction: instruction -> unit *)
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
+                    let info = Symb_Tbl.find str p in
     List.iter2
     (fun a b -> comparetype a (type_expression b))
-    p.formals el
+    info.formals el
 
     | Set(l, e) ->
       comparetype (type_location l) (type_expression e)
@@ -57,6 +58,15 @@ let typecheck_main p =
       comparetype ty_op (type_expression e2);
       ty_r
 
+      | FunCall(c) ->let str, el = c in
+                      let info = Symb_Tbl.find str p in
+      List.iter2
+      (fun a b -> comparetype a (type_expression b))
+      info.formals el;
+      match info.return with
+        | Some t -> t
+        | None -> failwith "Bonjour"
+
   (* type_literal: literal -> typ *)
   and type_literal = function
     | Int _  -> TypInteger
@@ -64,7 +74,7 @@ let typecheck_main p =
 
   (* type_location: location -> typ *)
   and type_location = function
-    | Identifier(id) -> (Symb_Tbl.find id symb_tbl).typ
+    | Identifier(id) -> (Symb_Tbl.find id !symb_tbl).typ
 
   (* [type_binop] renvoie le type des opérandes et le type du résultat
      d'un opérateur binaire. *)
@@ -76,4 +86,4 @@ let typecheck_main p =
 
   in
 
-  Symb_Tbl.iter (fun i info -> typecheck_block info) p
+  Symb_Tbl.iter (fun i info -> symb_tbl := info.locals; typecheck_block info.code) p

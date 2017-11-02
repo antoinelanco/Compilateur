@@ -43,7 +43,7 @@ let () =
   if !interpret
   then let _ = SourceInterpreter.eval_main p !input in ()
   else begin
-    let p = SourcetoUntyped.erase_main p in
+    let p = SourcetoUntyped.erase_prog p in
     let p = UntypedtoGoto.destructure_main p in
     let p = GototoIr.flatten_main p in
     (* Code à réintégrer à la séance 3 *)

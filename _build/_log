@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: Main.ml.depends, tags: { extension:ml, file:Main.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -modules Main.ml > Main.ml.depends # cached
+ocamlfind ocamldep -modules Main.ml > Main.ml.depends
 # Target: AllocatedtoMips.ml.depends, tags: { extension:ml, file:AllocatedtoMips.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules AllocatedtoMips.ml > AllocatedtoMips.ml.depends # cached
 # Target: AllocatedAst.ml.depends, tags: { extension:ml, file:AllocatedAst.ml, ocaml, ocamldep, quiet, traverse }
@@ -76,22 +76,25 @@ ocamlfind ocamlc -c -w -40 -o SourceParser.cmi SourceParser.mli # cached
 # Target: SourceLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceLexer.cmo, file:SourceLexer.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -w -40 -o SourceLexer.cmo SourceLexer.ml # cached
 # Target: SourceTypeChecker.ml.depends, tags: { extension:ml, file:SourceTypeChecker.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -modules SourceTypeChecker.ml > SourceTypeChecker.ml.depends
+ocamlfind ocamldep -modules SourceTypeChecker.ml > SourceTypeChecker.ml.depends # cached
+# Target: SourceTypeChecker.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceTypeChecker.cmo, file:SourceTypeChecker.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o SourceTypeChecker.cmo SourceTypeChecker.ml # cached
 # Target: SourcetoUntyped.ml.depends, tags: { extension:ml, file:SourcetoUntyped.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules SourcetoUntyped.ml > SourcetoUntyped.ml.depends # cached
+# Target: SourcetoUntyped.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourcetoUntyped.cmo, file:SourcetoUntyped.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o SourcetoUntyped.cmo SourcetoUntyped.ml # cached
 # Target: UntypedtoGoto.ml.depends, tags: { extension:ml, file:UntypedtoGoto.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules UntypedtoGoto.ml > UntypedtoGoto.ml.depends # cached
-# Target: SourceTypeChecker.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceTypeChecker.cmo, file:SourceTypeChecker.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -w -40 -o SourceTypeChecker.cmo SourceTypeChecker.ml
-+ ocamlfind ocamlc -c -w -40 -o SourceTypeChecker.cmo SourceTypeChecker.ml
-File "SourceTypeChecker.ml", line 49, characters 24-286:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a value that is not matched:
-FunCall _
-File "SourceTypeChecker.ml", line 79, characters 53-54:
-Error: This expression has type SourceAst.function_info
+# Target: UntypedtoGoto.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:UntypedtoGoto.cmo, file:UntypedtoGoto.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o UntypedtoGoto.cmo UntypedtoGoto.ml # cached
+# Target: Main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Main.cmo, file:Main.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o Main.cmo Main.ml
++ ocamlfind ocamlc -c -w -40 -o Main.cmo Main.ml
+File "Main.ml", line 47, characters 43-44:
+Error: This expression has type
+         SourcetoUntyped.T.function_info SourcetoUntyped.T.Symb_Tbl.t =
+           SourcetoUntyped.T.function_info Map.Make(String).t
        but an expression was expected of type
-         SourceAst.block SourceAst.Symb_Tbl.t =
-           SourceAst.block Map.Make(String).t
+         UntypedtoGoto.S.function_info = UntypedAst.function_info
 Command exited with code 2.
 # Compilation unsuccessful.

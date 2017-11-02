@@ -49,6 +49,8 @@
     {locals = locals; code=is} }
 ;*/
 
+
+
 prog:
 | (* empty *) EOF { Symb_Tbl.empty }
 | fs=fun_decl; p=prog

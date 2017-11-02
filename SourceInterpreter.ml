@@ -4,7 +4,8 @@ module State = Map.Make(String)
 type state = int State.t
 
 let rec eval_main p x =
-  eval_block (State.singleton "x" x) p.code
+  let info = Symb_Tbl.find "main" p in
+  eval_block (State.singleton "x" x) info.code
 
 (* [eval_block: state -> block -> state] *)
 and eval_block env = function
@@ -25,6 +26,7 @@ and eval_instruction env = function
     then eval_block env b1
     else eval_block env b2
   | Print(e) -> Printf.printf "%c" (char_of_int (eval_expression env e)); env
+  | _ -> failwith "Bonjour"
 
 (* [eval_expression: state -> expression -> int] *)
 and eval_expression env = function
@@ -47,6 +49,7 @@ and eval_expression env = function
 			   | Or   -> max
 			 in
 			 op v1 v2
+    | _ -> failwith "bonjour"
 
 and eval_bool b = if b then 1 else 0
 and eval_bool_op op = fun v1 v2 -> eval_bool (op v1 v2)
