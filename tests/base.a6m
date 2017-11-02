@@ -1,0 +1,12 @@
+main(integer x) (
+  var integer i;
+
+  for i:=0; i<x; i:=i+1 (
+    print(i);
+  );
+  if 2+2==4 then ( print (54););
+  i++;
+  i--;
+  i := i/2;
+  test;
+)
