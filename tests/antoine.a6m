@@ -1,0 +1,13 @@
+main(integer x) (
+
+var integer i;
+var integer j;
+
+i := 65;
+j := 10;
+
+i := i+j;
+
+print(i);
+
+)
