@@ -20,9 +20,11 @@ and instruction =
   | Goto     of label                 (* Saut              *)
   | CondGoto of expression * label    (* Saut conditionnel *)
   | Comment  of string                (* Commentaire       *)
-  | ProcCall of call 
+  | ProcCall of call
 
-type main = {
+type function_info = {
   locals: identifier_info Symb_Tbl.t;
   code:   block
 }
+
+and prog = function_info Symb_Tbl.t
