@@ -13,9 +13,9 @@ let spec =
   [ "-r", Arg.Set reg_allocation, "  with register allocation";
     "-dce", Arg.Set dead_code_elim, "  with dead code elimination";
     "-O", Arg.Tuple [Arg.Set reg_allocation; Arg.Set dead_code_elim],
-          "  full optimisation";
+    "  full optimisation";
     "-i", Arg.Tuple [Arg.Set_int input; Arg.Set interpret],
-          "  interpreter only";
+    "  interpreter only";
     "-frontend", Arg.Set prebuilt_frontend, "  use prebuilt frontend"
   ]
 
@@ -35,8 +35,8 @@ let () =
 
   let p  =  SourceParser.prog SourceLexer.token lb
   (* if !prebuilt_frontend
-    then PrebuiltParser.main PrebuiltLexer.token lb
-    else SourceParser.main SourceLexer.token lb *)
+     then PrebuiltParser.main PrebuiltLexer.token lb
+     else SourceParser.main SourceLexer.token lb *)
   in
   close_in c;
   SourceTypeChecker.typecheck_main p;

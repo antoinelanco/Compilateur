@@ -1,6 +1,6 @@
 # Antoine Lanco Compilateur
 
-## Fait et fonctionnel :
+* Fait et fonctionnel :
                   TP1)
                   - 1. Traduction des structures de contrôle (UntypedtoGoto.ml)
                   - 2. Traduction des expressions (GototoIr.ml)
@@ -25,7 +25,7 @@
                   - - 2.2.1. Méthode ad hoc ( 2/3 fonctionnel )
 
 
-## Fait pas encore fonctionnel :
+* Fait pas encore fonctionnel :
 
                   TP4)
                   - 2.2.1. Méthode ad hoc (presque fini, compile mais

@@ -35,9 +35,9 @@ let flatten_main p =
   (* flatten_instruction: S.instruction -> T.instruction list *)
   and flatten_instruction = function
     | S.ProcCall(c) -> let str,args = c in
-                       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
-                        let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
-                        es@[ T.ProcCall(str,vs) ]
+      let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
+          let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
+      es@[ T.ProcCall(str,vs) ]
     | S.Print(e) ->
       let ce, ve = flatten_expression e in
       ce @ [ T.Print(ve) ]
@@ -45,7 +45,7 @@ let flatten_main p =
     | S.Set(l,e) ->
       let ce, ve = flatten_expression e in
       let i = match l with
-      | Identifier(s) -> s
+        | Identifier(s) -> s
       in
       ce @ [ T.Value(i,ve) ]
 
@@ -68,18 +68,18 @@ let flatten_main p =
   *)
   and flatten_expression : S.expression -> T.instruction list * T.value =
     function
-      | FunCall(c) -> let str,args = c in
-                      let i = new_tmp() in
-                       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
-                        let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
-                        es@[ T.FunCall(str,i,vs) ], T.Identifier(i)
+    | FunCall(c) -> let str,args = c in
+      let i = new_tmp() in
+      let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
+          let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
+      es@[ T.FunCall(str,i,vs) ], T.Identifier(i)
 
-      | Location(Identifier id) -> [], T.Identifier(id)
-      | Literal(l) -> [], T.Literal(l)
-      | Binop(b,e1,e2) -> let i = new_tmp() in
-                          let ce1, ve1 = flatten_expression e1 in
-                          let ce2, ve2 = flatten_expression e2 in
-                          ce1 @ ce2 @ [ T.Binop(i,b,ve1,ve2) ], T.Identifier(i)
+    | Location(Identifier id) -> [], T.Identifier(id)
+    | Literal(l) -> [], T.Literal(l)
+    | Binop(b,e1,e2) -> let i = new_tmp() in
+      let ce1, ve1 = flatten_expression e1 in
+      let ce2, ve2 = flatten_expression e2 in
+      ce1 @ ce2 @ [ T.Binop(i,b,ve1,ve2) ], T.Identifier(i)
   in
 
   (* label_instruction: T.instruction -> T.label * T.instruction *)
@@ -90,15 +90,15 @@ let flatten_main p =
   let label_instruction =
     let cpt = ref 0 in
     fun i -> let lab = Printf.sprintf "_prog_%d" !cpt in
-	     incr cpt;
-	     match i with
-	       (* On force une correspondance entre étiquette de saut
-		  et étiquette d'analyse. *)
-	       | T.Label l -> l, i
-	       | _         -> lab, i
+      incr cpt;
+      match i with
+      (* On force une correspondance entre étiquette de saut
+         		  et étiquette d'analyse. *)
+      | T.Label l -> l, i
+      | _         -> lab, i
   in
 
 
   S.Symb_Tbl.fold (fun i info acc -> symb_tbl := info.S.locals;
-     let flattened_code = flatten_block info.S.code in
-  T.Symb_Tbl.add i { T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code } acc ) p T.Symb_Tbl.empty
+                    let flattened_code = flatten_block info.S.code in
+                    T.Symb_Tbl.add i { T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code } acc ) p T.Symb_Tbl.empty

@@ -18,9 +18,9 @@ open IrLiveness
    vivantes en sortie de cette instruction. *)
 let add_interferences g lv_out_at_node = function
   | Binop(a, _, Identifier v1, Identifier v2) ->
-      Graph.add_edge (VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g) v1 v2
+    Graph.add_edge (VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g) v1 v2
   | Binop (a,_,_,_) | Value(a, _) ->
-      VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g
+    VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g
   | _ -> g
 
 (* Fonction principale, qui itère sur l'ensemble des points du programme. *)
@@ -33,4 +33,4 @@ let interference_graph p : Graph.t =
   (* Enfin, itérer sur l'ensemble des points du programme. *)
   (* À compléter *)
   List.fold_left (fun acc (lab, instr) ->
-     add_interferences acc (Hashtbl.find lv_out lab) instr) g p.code
+      add_interferences acc (Hashtbl.find lv_out lab) instr) g p.code

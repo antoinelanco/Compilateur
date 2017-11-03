@@ -1,4 +1,4 @@
-  (**
+(**
    Les couleurs sont des entiers.
    Une coloration associe les identifiants à des couleurs.
 *)
@@ -18,7 +18,7 @@ let pick_color g coloring n =
   (* À compléter *)
   let voisin = Graph.neighbours g n in
   let int_voisin = List.sort (-) (List.fold_left (
-    fun acc i -> (NodeMap.find i coloring)::acc) [] voisin) in
+      fun acc i -> (NodeMap.find i coloring)::acc) [] voisin) in
 
   List.fold_left (fun acc i -> if i == acc then acc + 1 else acc ) 0 int_voisin
 
@@ -30,6 +30,6 @@ let rec colorize (g : Graph.t) : coloring =
   match min_som with
   | None -> NodeMap.empty
   | Some s -> let g' = Graph.del_node g s in
-              let c = colorize g' in
-              let new_color = pick_color g c s in
-              NodeMap.add s new_color c
+    let c = colorize g' in
+    let new_color = pick_color g c s in
+    NodeMap.add s new_color c

@@ -46,7 +46,7 @@ and print_instruction = function
   | ProcCall(s,vl) -> "ProcCall" (*A completer*)
   | Value(dest, v)   -> sprintf "%s <- %s" dest (print_value v)
   | Binop(dest, op, v1, v2) -> sprintf "%s <- %s %s %s"
-    dest (print_value v1) (SourceAst.print_binop op) (print_value v2)
+                                 dest (print_value v1) (SourceAst.print_binop op) (print_value v2)
   | Print(v)         -> sprintf "print(%s)" (print_value v)
   | Label(lab)       -> lab
   | Goto(lab)        -> sprintf "goto %s" lab

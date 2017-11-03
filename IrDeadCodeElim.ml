@@ -6,7 +6,7 @@ open IrLiveness
    où le booléen [b] vaut [true] si au moins une instruction a été
    éliminée.
      [dce_step: IrAst.main -> bool * IrAst.main]
- *)
+*)
 let dce_step p =
 
   (* Calcul des informations de vivacité *)
@@ -29,8 +29,8 @@ let dce_step p =
 
   let live_instr = function
     | (lab, instr) -> let tmp_out = Hashtbl.find lv_out lab in
-                      let update = var_updated instr in
-                      VarSet.subset update tmp_out
+      let update = var_updated instr in
+      VarSet.subset update tmp_out
   in
 
   (* Filtre la liste pour ne garder que les instructions vivantes *)
