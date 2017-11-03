@@ -147,7 +147,11 @@ let generate_fun p =
   in
 
   let start_fun =
-    nop
+    addi sp sp (-4)
+    @@ sw ra 4(sp)
+    @@ sw fp 0(sp)
+    @@ move fp sp
+    @@ addi sp sp (-4)
   in
 
   let end_fun =
@@ -158,10 +162,9 @@ start_fun @@ (generate_block p.code) @@ end_fun
 
 let init =
     move fp sp
-    @@ addi fp fp (-4)
     @@ lw a0 0 a1
     @@ jal "atoi"
-    @@ sw v0 0 fp
+    @@ move a0 v0
     @@ jal "main"
 
 let close = li v0 10 @@ syscall
