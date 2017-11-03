@@ -4,9 +4,9 @@ module Symb_Tbl = Map.Make(String)
 
 (* Programme principal : une table de symboles et un bloc de code *)
 (* type main = {
-  locals: identifier_info Symb_Tbl.t;
-  code: block;
-} *)
+   locals: identifier_info Symb_Tbl.t;
+   code: block;
+   } *)
 
 type prog = function_info Symb_Tbl.t
 and function_info = {
@@ -72,8 +72,8 @@ let print_identifier_info i = print_typ i.typ
 
 let print_symb_tbl tbl =
   Symb_Tbl.fold (fun v i s ->
-    (sprintf "  var %s %s;\n" (print_identifier_info i) v) ^ s
-  ) tbl ""
+      (sprintf "  var %s %s;\n" (print_identifier_info i) v) ^ s
+    ) tbl ""
 
 let print_literal = function
   | Int i -> sprintf "%d" i

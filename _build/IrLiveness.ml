@@ -23,8 +23,8 @@ open IrAst
      précédente
 *)
 let add_first_label target_lab succ = function
-| (lab,_) :: code -> Hashtbl.add succ target_lab lab;
-| [] -> ()
+  | (lab,_) :: code -> Hashtbl.add succ target_lab lab;
+  | [] -> ()
 
 let mk_succ code =
   (* Création avec une capacité arbitraire ; la table sera étendue au besoin *)
@@ -35,7 +35,7 @@ let mk_succ code =
     (* Cas offert : instruction [Goto] *)
     | (lab, Goto(target_lab)) :: code ->
       (* Le seul successeur d'une instruction [Goto] est l'instruction désignée
-	 par l'étiquette de saut. *)
+         	 par l'étiquette de saut. *)
       Hashtbl.add succ lab target_lab;
       (* Puis on itère. *)
       mk_succ code
@@ -87,9 +87,9 @@ let mk_lv p =
   (* Initialisation des tables [lv_in] et [lv_out],
      associe [VarSet.empty] à chaque point de programme. *)
   List.iter (fun (lab, _) ->
-    Hashtbl.add lv_in  lab VarSet.empty;
-    Hashtbl.add lv_out lab VarSet.empty
-  ) code;
+      Hashtbl.add lv_in  lab VarSet.empty;
+      Hashtbl.add lv_out lab VarSet.empty
+    ) code;
 
   (* Les fonctions [lv_gen] et [lv_kill] prennent en paramètre une instruction
      et indiquent respectivement l'ensemble des variables vivantes qu'elle
@@ -101,7 +101,7 @@ let mk_lv p =
   let get_ident_string = function
     | Identifier (id) -> VarSet.singleton id
     | Literal (_) -> VarSet.empty
-in
+  in
 
   let rec lv_gen : IrAst.instruction -> VarSet.t = function
     | Print(v) -> get_ident_string v

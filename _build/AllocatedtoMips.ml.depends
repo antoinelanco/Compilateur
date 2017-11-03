@@ -1,1 +1,1 @@
-AllocatedtoMips.ml: AllocatedAst Mips Printf
+AllocatedtoMips.ml: AllocatedAst Mips Printf Symb_Tbl

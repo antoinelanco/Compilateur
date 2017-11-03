@@ -25,24 +25,24 @@ let destructure_main p =
     | Print(e)  -> [ T.Print(e)  ]
     | Set(l, e) -> [ T.Set(l,e) ]
     | If(e,b1,b2) -> let i = new_label() in
-                     let j = new_label() in
-                    [ T.CondGoto(e,i) ] @
-                    (destructure_block b2) @
-                    [ T.Goto(j);
-                      T.Label(i) ] @
-                    (destructure_block b1) @
-                    [ T.Label(j) ]
+      let j = new_label() in
+      [ T.CondGoto(e,i) ] @
+      (destructure_block b2) @
+      [ T.Goto(j);
+        T.Label(i) ] @
+      (destructure_block b1) @
+      [ T.Label(j) ]
 
     | While(e,b) -> let i = new_label() in
-                    let j = new_label() in
-                    [ T.Goto(i);
-                      T.Label(j) ] @
-                    (destructure_block b) @
-                    [T.Label(i);
-                     T.CondGoto(e,j)]
+      let j = new_label() in
+      [ T.Goto(i);
+        T.Label(j) ] @
+      (destructure_block b) @
+      [T.Label(i);
+       T.CondGoto(e,j)]
 
   in
 
   S.Symb_Tbl.fold (fun i info acc ->
-    T.Symb_Tbl.add i { T.locals = info.S.locals; T.code = destructure_block info.S.code } acc )
-  p T.Symb_Tbl.empty
+      T.Symb_Tbl.add i { T.locals = info.S.locals; T.code = destructure_block info.S.code } acc )
+    p T.Symb_Tbl.empty

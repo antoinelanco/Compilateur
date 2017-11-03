@@ -25,10 +25,10 @@ let typecheck_main p =
   (* typecheck_instruction: instruction -> unit *)
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
-                    let info = Symb_Tbl.find str p in
-    List.iter2
-    (fun a b -> comparetype a (type_expression b))
-    info.formals el
+      let info = Symb_Tbl.find str p in
+      List.iter2
+        (fun a b -> comparetype a (type_expression b))
+        info.formals el
 
     | Set(l, e) ->
       comparetype (type_location l) (type_expression e)
@@ -58,14 +58,14 @@ let typecheck_main p =
       comparetype ty_op (type_expression e2);
       ty_r
 
-      | FunCall(c) ->let str, el = c in
-                      let info = Symb_Tbl.find str p in
+    | FunCall(c) ->let str, el = c in
+      let info = Symb_Tbl.find str p in
       List.iter2
-      (fun a b -> comparetype a (type_expression b))
-      info.formals el;
+        (fun a b -> comparetype a (type_expression b))
+        info.formals el;
       match info.return with
-        | Some t -> t
-        | None -> failwith "Bonjour"
+      | Some t -> t
+      | None -> failwith "Bonjour"
 
   (* type_literal: literal -> typ *)
   and type_literal = function

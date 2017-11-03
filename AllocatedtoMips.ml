@@ -1,7 +1,8 @@
 open AllocatedAst
 open Mips
 
-let generate_main p =
+
+let generate_fun p =
 
   (* Affecte des emplacements mémoire aux variables locales. *)
   let sp_off   = p.offset in
@@ -145,43 +146,53 @@ let generate_main p =
 
   in
 
-  let init =
+  let start_fun =
+    nop
+  in
+
+  let end_fun =
+    nop
+  in
+
+start_fun @@ (generate_block p.code) @@ end_fun
+
+let init =
     move fp sp
     @@ addi fp fp (-4)
     @@ lw a0 0 a1
     @@ jal "atoi"
     @@ sw v0 0 fp
-    @@ addi sp sp sp_off
-  in
+    @@ jal "main"
 
-  let close = li v0 10 @@ syscall in
+let close = li v0 10 @@ syscall
 
-  let built_ins =
-    label "atoi"
-    @@ move t0 a0
-    @@ li   t1 0
-    @@ li   t2 10
-    @@ label "atoi_loop"
-    @@ lbu  t3 0 t0
-    @@ beq  t3 zero "atoi_end"
-    @@ li   t4 48
-    @@ blt  t3 t4 "atoi_error"
-    @@ li   t4 57
-    @@ bgt  t3 t4 "atoi_error"
-    @@ addi t3 t3 (-48)
-    @@ mul  t1 t1 t2
-    @@ add  t1 t1 t3
-    @@ addi t0 t0 1
-    @@ b "atoi_loop"
-    @@ label "atoi_error"
-    @@ li   v0 10
-    @@ syscall
-    @@ label "atoi_end"
-    @@ move v0 t1
-    @@ jr   ra
-  in
+let built_ins =
+  label "atoi"
+  @@ move t0 a0
+  @@ li   t1 0
+  @@ li   t2 10
+  @@ label "atoi_loop"
+  @@ lbu  t3 0 t0
+  @@ beq  t3 zero "atoi_end"
+  @@ li   t4 48
+  @@ blt  t3 t4 "atoi_error"
+  @@ li   t4 57
+  @@ bgt  t3 t4 "atoi_error"
+  @@ addi t3 t3 (-48)
+  @@ mul  t1 t1 t2
+  @@ add  t1 t1 t3
+  @@ addi t0 t0 1
+  @@ b "atoi_loop"
+  @@ label "atoi_error"
+  @@ li   v0 10
+  @@ syscall
+  @@ label "atoi_end"
+  @@ move v0 t1
+  @@ jr   ra
 
-  let asm = Symb_Tbl.fold (fun i info acc ->
-      acc @@ label id @@ (generate_block info.code)  ) p nop in
 
-  { text = init @@ asm @@ close @@ built_ins; data = nop }
+let generate_prog p =
+let asm = Symb_Tbl.fold (fun i info acc ->
+    acc @@ (label i) @@ (generate_fun info) ) p nop in
+
+{ text = init @@ close @@ asm @@ built_ins; data = nop }
