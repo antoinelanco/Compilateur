@@ -152,6 +152,7 @@ let generate_fun p =
     @@ sw fp 0(sp)
     @@ move fp sp
     @@ addi sp sp (-4)
+    @@ addi sp sp sp_off
   in
 
   let end_fun =
