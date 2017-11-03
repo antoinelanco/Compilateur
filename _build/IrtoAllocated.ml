@@ -32,8 +32,7 @@ let allocate_main reg_flag prog =
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
               let i = NodeMap.find id g_color in
               match info with
-                | Formal(_) -> T.Stack 0
-                | Local -> if i > 7
+                | _ -> if i > 7
                             then (current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack))
                             else T.Reg ("$t" ^ string_of_int(i+2))
                   ) p.S.locals
@@ -42,8 +41,7 @@ let allocate_main reg_flag prog =
       (* Tout sur la pile *)
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
             	match info with
-            	  | Formal(_) -> T.Stack 0
-            	  | Local -> current_offset_stack := !current_offset_stack - 4; T.Stack (!current_offset_stack)
+            	  | _ -> current_offset_stack := !current_offset_stack - 4; T.Stack (!current_offset_stack)
                   ) p.S.locals
   in
 

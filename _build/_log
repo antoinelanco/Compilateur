@@ -59,9 +59,6 @@ ocamlfind ocamldep -modules SourceLexer.ml > SourceLexer.ml.depends
 menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' SourceParser.mly > SourceParser.mly.depends
 # Target: SourceParser.mly, tags: { byte, compile, extension:ml, extension:mly, file:SourceParser.ml, file:SourceParser.mly, infer, menhir, ocaml, parser, quiet, traverse }
 menhir --ocamlc 'ocamlfind ocamlc -w -40' --infer SourceParser.mly
-+ menhir --ocamlc 'ocamlfind ocamlc -w -40' --infer SourceParser.mly
-Warning: one state has shift/reduce conflicts.
-Warning: one shift/reduce conflict was arbitrarily resolved.
 # Target: SourceParser.mli.depends, tags: { extension:mli, file:SourceParser.mli, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules SourceParser.mli > SourceParser.mli.depends
 # Target: SourceParser.cmi, tags: { byte, compile, extension:mli, file:SourceParser.mli, interf, ocaml, quiet, traverse }
@@ -80,15 +77,6 @@ ocamlfind ocamlc -c -w -40 -o GototoIr.cmo GototoIr.ml
 ocamlfind ocamlc -c -w -40 -o IrDeadCodeElim.cmo IrDeadCodeElim.ml
 # Target: IrtoAllocated.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:IrtoAllocated.cmo, file:IrtoAllocated.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -w -40 -o IrtoAllocated.cmo IrtoAllocated.ml
-+ ocamlfind ocamlc -c -w -40 -o IrtoAllocated.cmo IrtoAllocated.ml
-File "IrtoAllocated.ml", line 34, characters 14-293:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a value that is not matched:
-Return
-File "IrtoAllocated.ml", line 44, characters 13-177:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a value that is not matched:
-Return
 # Target: SourceInterpreter.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceInterpreter.cmo, file:SourceInterpreter.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -w -40 -o SourceInterpreter.cmo SourceInterpreter.ml
 # Target: SourceLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceLexer.cmo, file:SourceLexer.ml, implem, ocaml, quiet, traverse }

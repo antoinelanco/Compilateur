@@ -4,7 +4,6 @@ type token =
   | WHILE
   | VAR
   | TRUE
-  | THEN
   | SUB
   | SET
   | SEMI

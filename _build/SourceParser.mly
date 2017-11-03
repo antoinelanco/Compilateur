@@ -13,7 +13,7 @@
 %token PRINT
 %token WHILE FOR
 %token INT BOOLEAN
-%token IF THEN ELSE
+%token IF ELSE /*THEN*/
 %token TRUE FALSE
 %token INC DEC
 %token ADD MULT SUB DIV EQ NEQ LT LE MT ME AND OR SET
@@ -86,12 +86,7 @@ fun_decl:
       Symb_Tbl.empty ps in
 
     let locals = Symb_Tbl.merge merge_vars local ftl in
-
-
     let formals = List.fold_left (fun acc (t,_) -> t::acc) [] ps in
-
-
-
 
     id, {
       return=Some t;
@@ -145,10 +140,10 @@ instruction:
 | id=IDENT; SET; e=expression { [Set(Identifier id,e)] }
 | id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
 | id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
-| WHILE; e=expression; BEGIN; is=instructions; END { [While(e,is)] }
-| IF; e=expression; THEN; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
-| IF; e=expression; THEN; BEGIN; is=instructions; END { [If(e,is,[])] }
-| FOR; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI; id2=IDENT; SET; e3=expression; BEGIN; bl=instructions; END
+| WHILE; BEGIN; e=expression; END ;BEGIN; is=instructions; END { [While(e,is)] }
+| IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
+| IF; BEGIN; e=expression; END; BEGIN; is=instructions; END { [If(e,is,[])] }
+| FOR; BEGIN; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI; id2=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
     { let block = bl @ [Set(Identifier id2, e3)] in [Set(Identifier id1, e1);While(e2, block)] }
 
 expression:

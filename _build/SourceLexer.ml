@@ -17,7 +17,7 @@
         "for",      FOR;
       	"print",    PRINT;
         "if",       IF;
-        "then",     THEN;
+        (*"then",     THEN;*)
         "else",     ELSE;
         "true",     TRUE;
         "false",    FALSE;
