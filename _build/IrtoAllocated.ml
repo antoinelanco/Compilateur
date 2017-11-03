@@ -3,10 +3,10 @@ module T = AllocatedAst
 open GraphColoring
 open IrInterferenceGraph
 (* Allocation *)
-let allocate_main reg_flag p =
+let allocate_main reg_flag prog =
   let current_offset_stack = ref 0 in
 
-  let tbl =
+  let tbl p =
     if reg_flag
     (*Version 1*)
     (* then
@@ -47,4 +47,6 @@ let allocate_main reg_flag p =
                   ) p.S.locals
   in
 
-  { T.locals = tbl; T.offset = !current_offset_stack; T.code = p.S.code }
+  S.Symb_Tbl.fold (fun i info acc ->
+    T.Symb_Tbl.add i {T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code} acc)
+   prog T.Symb_Tbl.empty

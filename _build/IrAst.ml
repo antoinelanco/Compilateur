@@ -10,10 +10,11 @@ type literal         = GotoAst.literal
 type identifier_info = GotoAst.identifier_info
 type binop           = GotoAst.binop
 
-type main = {
+type function_info = {
   locals: identifier_info Symb_Tbl.t;
   code:   block;
 }
+and prog = function_info Symb_Tbl.t
 
 and block = (label * instruction) list
 and instruction =

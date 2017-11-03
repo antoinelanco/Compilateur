@@ -34,6 +34,10 @@ let flatten_main p =
 
   (* flatten_instruction: S.instruction -> T.instruction list *)
   and flatten_instruction = function
+    | S.ProcCall(c) -> let str,args = c in
+                       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
+                        let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
+                        es@[ T.ProcCall(str,vs) ]
     | S.Print(e) ->
       let ce, ve = flatten_expression e in
       ce @ [ T.Print(ve) ]
@@ -64,6 +68,12 @@ let flatten_main p =
   *)
   and flatten_expression : S.expression -> T.instruction list * T.value =
     function
+      | FunCall(c) -> let str,args = c in
+                      let i = new_tmp() in
+                       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
+                        let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
+                        es@[ T.FunCall(str,i,vs) ], T.Identifier(i)
+
       | Location(Identifier id) -> [], T.Identifier(id)
       | Literal(l) -> [], T.Literal(l)
       | Binop(b,e1,e2) -> let i = new_tmp() in

@@ -1,1 +1,1 @@
-IrDeadCodeElim.ml: Hashtbl IrAst IrLiveness List VarSet
+IrDeadCodeElim.ml: Hashtbl IrAst IrLiveness List Symb_Tbl VarSet

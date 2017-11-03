@@ -3,10 +3,10 @@ module T = AllocatedAst
 open GraphColoring
 open IrInterferenceGraph
 (* Allocation *)
-let allocate_main reg_flag p =
+let allocate_main reg_flag prog =
   let current_offset_stack = ref 0 in
 
-  let tbl =
+  let tbl p =
     if reg_flag
     (*Version 1*)
     (* then
@@ -32,8 +32,7 @@ let allocate_main reg_flag p =
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
               let i = NodeMap.find id g_color in
               match info with
-                | Formal(_) -> T.Stack 0
-                | Local -> if i > 7
+                | _ -> if i > 7
                             then (current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack))
                             else T.Reg ("$t" ^ string_of_int(i+2))
                   ) p.S.locals
@@ -42,9 +41,10 @@ let allocate_main reg_flag p =
       (* Tout sur la pile *)
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
             	match info with
-            	  | Formal(_) -> T.Stack 0
-            	  | Local -> current_offset_stack := !current_offset_stack - 4; T.Stack (!current_offset_stack)
+            	  | _ -> current_offset_stack := !current_offset_stack - 4; T.Stack (!current_offset_stack)
                   ) p.S.locals
   in
 
-  { T.locals = tbl; T.offset = !current_offset_stack; T.code = p.S.code }
+  S.Symb_Tbl.fold (fun i info acc ->
+    T.Symb_Tbl.add i {T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code} acc)
+   prog T.Symb_Tbl.empty
