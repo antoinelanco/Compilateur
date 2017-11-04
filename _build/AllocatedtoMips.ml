@@ -67,7 +67,7 @@ let generate_fun p =
 
   and generate_instr : AllocatedAst.instruction -> 'a Mips.asm = function
     | FunCall(i,s,v) -> failwith "A completer"
-    | ProcCall(s,v) -> failwith "A completer"
+    | ProcCall(s,v) -> jal s
     | Print(v) -> load_value ~$a0 v @@ li ~$v0 11 @@ syscall
     | Goto(l) -> b l
     | Label(l) -> label l
@@ -100,7 +100,7 @@ let generate_fun p =
 
 
 
-    (*2.2.1. Méthode ad hoc qui ne marche pas je ne sais pas pk  *)
+    (*2.2.1. Méthode ad hoc *)
 
     | CondGoto(v,l) -> let reg ,inst = load_value_bis ~$t0 v in
       inst @@ bnez reg l
@@ -146,27 +146,30 @@ let generate_fun p =
 
   in
 
-  let start_fun =
-    addi sp sp (-4)
-    @@ sw ra 4(sp)
-    @@ sw fp 0(sp)
+  let start_fun = (*Etape 2*) (*Pas sur*)
+
+    sw fp (-4) sp
+    @@ sw ra (-8) sp
+    @@ addi sp sp (-8)
     @@ move fp sp
-    @@ addi sp sp (-4)
     @@ addi sp sp sp_off
   in
 
-  let end_fun =
-    nop
+  let end_fun = (*Etape 3*) (*Pas sur*)
+    lw ra 0 fp
+    @@ lw fp 4 fp
+    @@ addi sp sp (-sp_off+8)
+    @@ jr ra
   in
 
-start_fun @@ (generate_block p.code) @@ end_fun
+  start_fun @@ (generate_block p.code) @@ end_fun
 
 let init =
-    move fp sp
-    @@ lw a0 0 a1
-    @@ jal "atoi"
-    @@ move a0 v0
-    @@ jal "main"
+  move fp sp
+  @@ lw a0 0 a1
+  @@ jal "atoi"
+  @@ move a0 v0
+  @@ jal "main"
 
 let close = li v0 10 @@ syscall
 
@@ -196,7 +199,7 @@ let built_ins =
 
 
 let generate_prog p =
-let asm = Symb_Tbl.fold (fun i info acc ->
-    acc @@ (label i) @@ (generate_fun info) ) p nop in
+  let asm = Symb_Tbl.fold (fun i info acc ->
+      acc @@ (label i) @@ (generate_fun info) ) p nop in
 
-{ text = init @@ close @@ asm @@ built_ins; data = nop }
+  { text = init @@ close @@ asm @@ built_ins; data = nop }

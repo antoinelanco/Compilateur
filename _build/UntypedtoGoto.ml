@@ -43,7 +43,7 @@ let destructure_func p =
 
   in
 
-{ T.locals = p.S.locals; T.code = destructure_block p.S.code }
+  { T.locals = p.S.locals; T.code = destructure_block p.S.code }
 
 let destructure_prog p =
 

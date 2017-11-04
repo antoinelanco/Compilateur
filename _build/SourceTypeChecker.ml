@@ -83,7 +83,7 @@ let typecheck_func p =
     | And | Or                       -> TypBoolean, TypBoolean
 
   in
-typecheck_block p.code
+  typecheck_block p.code
 
 let typecheck_prog p =
 
