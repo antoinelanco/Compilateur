@@ -39,13 +39,13 @@ let () =
      else SourceParser.main SourceLexer.token lb *)
   in
   close_in c;
-  SourceTypeChecker.typecheck_main p;
+  SourceTypeChecker.typecheck_prog p;
   if !interpret
   then let _ = SourceInterpreter.eval_main p !input in ()
   else begin
     let p = SourcetoUntyped.erase_prog p in
-    let p = UntypedtoGoto.destructure_main p in
-    let p = GototoIr.flatten_main p in
+    let p = UntypedtoGoto.destructure_prog p in
+    let p = GototoIr.flatten_prog p in
     (* Code à réintégrer à la séance 3 *)
     let p =
       if   !dead_code_elim

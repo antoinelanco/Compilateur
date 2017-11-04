@@ -4,11 +4,11 @@ module S = GotoAst
 module T = IrAst
 
 
-let flatten_main p =
+let flatten_func p =
 
   (* On extrait la table des symboles de notre programme, qui sera étendue
      avec les registres virtuels créés à la volée. *)
-  let symb_tbl = ref S.Symb_Tbl.empty in
+  let symb_tbl = ref p.S.locals in
 
   (* Ajout à la table des symboles d'un nouveau registre virtuel *)
   let add_symb s =
@@ -98,7 +98,9 @@ let flatten_main p =
       | _         -> lab, i
   in
 
+  let flattened_code = flatten_block p.S.code in
 
-  S.Symb_Tbl.fold (fun i info acc -> symb_tbl := info.S.locals;
-                    let flattened_code = flatten_block info.S.code in
-                    T.Symb_Tbl.add i { T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code } acc ) p T.Symb_Tbl.empty
+  { T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code }
+
+let flatten_prog p =
+  S.Symb_Tbl.fold (fun i info acc -> T.Symb_Tbl.add i (flatten_func info) acc ) p T.Symb_Tbl.empty

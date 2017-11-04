@@ -159,14 +159,14 @@ let generate_fun p =
     nop
   in
 
-start_fun @@ (generate_block p.code) @@ end_fun
+  start_fun @@ (generate_block p.code) @@ end_fun
 
 let init =
-    move fp sp
-    @@ lw a0 0 a1
-    @@ jal "atoi"
-    @@ move a0 v0
-    @@ jal "main"
+  move fp sp
+  @@ lw a0 0 a1
+  @@ jal "atoi"
+  @@ move a0 v0
+  @@ jal "main"
 
 let close = li v0 10 @@ syscall
 
@@ -196,7 +196,7 @@ let built_ins =
 
 
 let generate_prog p =
-let asm = Symb_Tbl.fold (fun i info acc ->
-    acc @@ (label i) @@ (generate_fun info) ) p nop in
+  let asm = Symb_Tbl.fold (fun i info acc ->
+      acc @@ (label i) @@ (generate_fun info) ) p nop in
 
-{ text = init @@ close @@ asm @@ built_ins; data = nop }
+  { text = init @@ close @@ asm @@ built_ins; data = nop }
