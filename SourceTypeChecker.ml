@@ -11,7 +11,7 @@ let comparetype t1 t2 =
   then raise (Type_error(t1, t2))
 
 (* Vérification des types d'un programme *)
-let typecheck_func p =
+let typecheck_func p tab =
   (* L'analyse de tout le programme se fait dans le contexte de la même
      table de symboles. On la définit ici puis on définit les fonctions
      d'analyse récursives dans ce contexte. *)
@@ -25,9 +25,10 @@ let typecheck_func p =
   (* typecheck_instruction: instruction -> unit *)
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
+      let infos = Symb_Tbl.find str tab in
       List.iter2
         (fun (a,_) b -> comparetype a (type_expression b))
-        p.formals el
+        infos.formals el
 
     | Set(l, e) ->
       comparetype (type_location l) (type_expression e)
@@ -58,9 +59,10 @@ let typecheck_func p =
       ty_r
 
     | FunCall(c) ->let str, el = c in
+      let infos = Symb_Tbl.find str tab in
       List.iter2
         (fun (a,_) b -> comparetype a (type_expression b))
-        p.formals el;
+        infos.formals el;
       match p.return with
       | Some t -> t
       | None -> failwith "il ny a pas de type de retour (bug)"
@@ -87,4 +89,4 @@ let typecheck_func p =
 
 let typecheck_prog p =
 
-  Symb_Tbl.iter (fun i info -> typecheck_func info) p
+  Symb_Tbl.iter (fun i info -> typecheck_func info p) p

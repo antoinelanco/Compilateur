@@ -107,7 +107,7 @@ let mk_lv p =
     | Print(v) | Value(_,v) | CondGoto(v,_) -> get_ident_string v
     | Binop(_,_,v1,v2) -> VarSet.union (get_ident_string v1) (get_ident_string v2)
     | ProcCall(_,v_l) | FunCall(_,_,v_l) -> List.fold_left (fun acc v ->
-      VarSet.union acc (get_ident_string(v) ) ) VarSet.empty v_l
+        VarSet.union acc (get_ident_string(v) ) ) VarSet.empty v_l
     | _ -> VarSet.empty
 
   and lv_kill : IrAst.instruction -> VarSet.t = function

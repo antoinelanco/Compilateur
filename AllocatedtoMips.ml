@@ -70,17 +70,52 @@ let generate_fun p =
     | ProcCall(s,v) ->
 
 
-      let args, nb = List.fold_left (fun (acc,i) e ->
-          (acc @@
-           load_value ~$t0 e
-           @@ sw ~$t0 (-i * 4 - 4) ~$sp,i+1)) (nop,0) v in
+      let save_args, nb = List.fold_left (fun (acc,i) e ->
+          (let reg1, inst1 = load_value_bis ~$t0 e in
+
+           acc
+           @@ inst1
+           @@ sw reg1 (-i * 4 - 4) ~$sp,i+1) )
+
+          (nop,0) v
+      in
+
       let stack_args = nb*4 in
+
+      let max_reg = Symb_Tbl.fold
+          (fun id alloc_info acc ->
+             match alloc_info with
+               Reg s -> let index = int_of_string (String.sub s 2 1) in
+               if index > acc then index else acc
+             | _ -> acc)
+          p.locals 0
+      in
+
+      let save_reg reg =
+        let rec aux r =
+          match r with
+          | 2 -> sw ("$t"^string_of_int(r)) (-4) sp
+          | n -> aux (n-1) @@ sw ("$t"^string_of_int(r)) (-(n-1) * 4) sp
+        in
+        aux reg @@ addi sp sp (-(reg-1) * 4)
+      in
+
+      let load_reg reg =
+        let rec aux r =
+          match r with
+          | 2 -> lw ("$t"^string_of_int(r)) (-4) sp
+          | n -> aux (n-1) @@ lw ("$t"^string_of_int(r)) (-(n-1) * 4) sp
+        in
+        addi sp sp ((reg-1) * 4) @@ aux reg in
+
       (*Etape 1*)
-      args
+      save_reg max_reg
+      @@ save_args
       @@ addi sp sp (-stack_args)
       @@ jal s
       (*Etape 4*)
       @@ addi sp sp stack_args
+      @@ load_reg max_reg
 
     | Print(v) -> load_value ~$a0 v @@ li ~$v0 11 @@ syscall
     | Goto(l) -> b l
@@ -160,6 +195,17 @@ let generate_fun p =
 
   in
 
+  let load_args =
+    let nb_args = List.length p.formals in
+    let args, index = List.fold_left
+        (fun (v,i) arg -> match find_alloc arg with
+           | Reg r -> (v @@ lw r ((nb_args-i)*4 +8) ~$fp ,i+1)
+           | Stack o -> (v @@ lw ~$t0 (+8) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
+        (nop,0) p.formals
+    in
+    args
+  in
+
   let start_fun = (*Etape 2*)
 
     sw fp (-4) sp
@@ -167,6 +213,7 @@ let generate_fun p =
     @@ addi sp sp (-8)
     @@ move fp sp
     @@ addi sp sp sp_off
+    @@ load_args
   in
 
   let end_fun = (*Etape 3*)
