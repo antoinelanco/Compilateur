@@ -104,15 +104,14 @@ let mk_lv p =
   in
 
   let rec lv_gen : IrAst.instruction -> VarSet.t = function
-    | Print(v) -> get_ident_string v
-    | Value(_,v) -> get_ident_string v
-    | CondGoto(v,_) -> get_ident_string v
+    | Print(v) | Value(_,v) | CondGoto(v,_) -> get_ident_string v
     | Binop(_,_,v1,v2) -> VarSet.union (get_ident_string v1) (get_ident_string v2)
+    | ProcCall(_,v_l) | FunCall(_,_,v_l) -> List.fold_left (fun acc v ->
+      VarSet.union acc (get_ident_string(v) ) ) VarSet.empty v_l
     | _ -> VarSet.empty
 
   and lv_kill : IrAst.instruction -> VarSet.t = function
-    | Value(id,_) -> VarSet.singleton id
-    | Binop(id,_,_,_) -> VarSet.singleton id
+    | Value(id,_) | Binop(id,_,_,_) | FunCall(id,_,_) -> VarSet.singleton id
     | _ -> VarSet.empty
   in
 
