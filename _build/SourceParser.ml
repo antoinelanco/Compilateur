@@ -1279,7 +1279,7 @@ and _menhir_goto_instructions : _menhir_env -> 'ttv_tail -> _menhir_state -> (So
         Symb_Tbl.empty ps in
       let locals = Symb_Tbl.merge merge_vars vds ftl in
 
-      let formals = List.fold_left (fun acc (t,_) -> t::acc) [] ps in
+      let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
       id, {
         return=None;
         formals=formals;
@@ -1322,7 +1322,7 @@ and _menhir_goto_instructions : _menhir_env -> 'ttv_tail -> _menhir_state -> (So
       Symb_Tbl.empty ps in
 
     let locals = Symb_Tbl.merge merge_vars local ftl in
-    let formals = List.fold_left (fun acc (t,_) -> t::acc) [] ps in
+    let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
 
     id, {
       return=Some t;
@@ -1628,7 +1628,7 @@ and _menhir_goto_var_decls : _menhir_env -> 'ttv_tail -> _menhir_state -> (Sourc
         let _menhir_stack = Obj.magic _menhir_stack in
         let _menhir_stack = Obj.magic _menhir_stack in
         let ((((_menhir_stack, _menhir_s), _, t), id), _, tbl) = _menhir_stack in
-        let _v : (SourceAst.identifier_info SourceAst.Symb_Tbl.t) =                                              ( let info = {typ=t; kind=Local} in Symb_Tbl.add id info tbl ) in
+        let _v : (SourceAst.identifier_info SourceAst.Symb_Tbl.t) =   ( let info = {typ=t; kind=Local} in Symb_Tbl.add id info tbl ) in
         _menhir_goto_var_decls _menhir_env _menhir_stack _menhir_s _v
     | MenhirState12 ->
         let _menhir_stack = Obj.magic _menhir_stack in

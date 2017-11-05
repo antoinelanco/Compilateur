@@ -65,7 +65,8 @@ typs:
 
 var_decls:
 | (* empty *) { Symb_Tbl.empty }
-| VAR; t=typs; id=IDENT; SEMI; tbl=var_decls { let info = {typ=t; kind=Local} in Symb_Tbl.add id info tbl }
+| VAR; t=typs; id=IDENT; SEMI; tbl=var_decls
+  { let info = {typ=t; kind=Local} in Symb_Tbl.add id info tbl }
 
 fun_decl:
 | t=typs; id=IDENT; BEGIN; ps=para; END; BEGIN; vds=var_decls; is=instructions; END {
@@ -86,7 +87,7 @@ fun_decl:
       Symb_Tbl.empty ps in
 
     let locals = Symb_Tbl.merge merge_vars local ftl in
-    let formals = List.fold_left (fun acc (t,_) -> t::acc) [] ps in
+    let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
 
     id, {
       return=Some t;
@@ -111,7 +112,7 @@ fun_decl:
         Symb_Tbl.empty ps in
       let locals = Symb_Tbl.merge merge_vars vds ftl in
 
-      let formals = List.fold_left (fun acc (t,_) -> t::acc) [] ps in
+      let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
       id, {
         return=None;
         formals=formals;

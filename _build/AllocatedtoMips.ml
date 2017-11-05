@@ -67,7 +67,21 @@ let generate_fun p =
 
   and generate_instr : AllocatedAst.instruction -> 'a Mips.asm = function
     | FunCall(i,s,v) -> failwith "A completer"
-    | ProcCall(s,v) -> jal s
+    | ProcCall(s,v) ->
+
+
+      let args, nb = List.fold_left (fun (acc,i) e ->
+          (acc @@
+           load_value ~$t0 e
+           @@ sw ~$t0 (-i * 4 - 4) ~$sp,i+1)) (nop,0) v in
+      let stack_args = nb*4 in
+      (*Etape 1*)
+      args
+      @@ addi sp sp (-stack_args)
+      @@ jal s
+      (*Etape 4*)
+      @@ addi sp sp stack_args
+
     | Print(v) -> load_value ~$a0 v @@ li ~$v0 11 @@ syscall
     | Goto(l) -> b l
     | Label(l) -> label l
@@ -146,7 +160,7 @@ let generate_fun p =
 
   in
 
-  let start_fun = (*Etape 2*) (*Pas sur*)
+  let start_fun = (*Etape 2*)
 
     sw fp (-4) sp
     @@ sw ra (-8) sp
@@ -155,7 +169,7 @@ let generate_fun p =
     @@ addi sp sp sp_off
   in
 
-  let end_fun = (*Etape 3*) (*Pas sur*)
+  let end_fun = (*Etape 3*)
     lw ra 0 fp
     @@ lw fp 4 fp
     @@ addi sp sp (-sp_off+8)

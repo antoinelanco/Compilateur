@@ -46,5 +46,5 @@ let allocate_main reg_flag prog =
   in
 
   S.Symb_Tbl.fold (fun i info acc ->
-      T.Symb_Tbl.add i {T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code} acc)
+      T.Symb_Tbl.add i {T.formals = info.S.formals; T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code} acc)
     prog T.Symb_Tbl.empty

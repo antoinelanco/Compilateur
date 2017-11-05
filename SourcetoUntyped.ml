@@ -21,5 +21,11 @@ let erase_prog p =
   S.Symb_Tbl.fold (
     fun i info acc -> let locals = S.Symb_Tbl.fold (
         fun id inf tbl ->
-          T.Symb_Tbl.add id (erase_identifier_info inf) tbl) info.S.locals T.Symb_Tbl.empty in
-      T.Symb_Tbl.add i {T.locals = locals; T.code = info.S.code} acc) p T.Symb_Tbl.empty
+          T.Symb_Tbl.add id (erase_identifier_info inf) tbl)
+        info.S.locals T.Symb_Tbl.empty in
+
+      let formals = List.fold_left
+          (fun acc (_,id) -> acc@[id])
+          [] info.S.formals in
+
+      T.Symb_Tbl.add i {T.formals = formals; T.locals = locals; T.code = info.S.code} acc) p T.Symb_Tbl.empty

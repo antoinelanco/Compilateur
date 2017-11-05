@@ -1,1 +1,1 @@
-SourcetoUntyped.ml: SourceAst UntypedAst
+SourcetoUntyped.ml: List SourceAst UntypedAst

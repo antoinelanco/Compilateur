@@ -11,6 +11,7 @@ type identifier_info = GotoAst.identifier_info
 type binop           = GotoAst.binop
 
 type function_info = {
+  formals: string list;
   locals: identifier_info Symb_Tbl.t;
   code:   block;
 }

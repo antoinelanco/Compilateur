@@ -26,7 +26,7 @@ let typecheck_func p =
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
       List.iter2
-        (fun a b -> comparetype a (type_expression b))
+        (fun (a,_) b -> comparetype a (type_expression b))
         p.formals el
 
     | Set(l, e) ->
@@ -59,11 +59,11 @@ let typecheck_func p =
 
     | FunCall(c) ->let str, el = c in
       List.iter2
-        (fun a b -> comparetype a (type_expression b))
+        (fun (a,_) b -> comparetype a (type_expression b))
         p.formals el;
       match p.return with
       | Some t -> t
-      | None -> failwith "Bonjour"
+      | None -> failwith "il ny a pas de type de retour (bug)"
 
   (* type_literal: literal -> typ *)
   and type_literal = function

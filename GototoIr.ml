@@ -100,7 +100,7 @@ let flatten_func p =
 
   let flattened_code = flatten_block p.S.code in
 
-  { T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code }
+  { T.formals = p.S.formals; T.locals = !symb_tbl; T.code = List.map label_instruction flattened_code }
 
 let flatten_prog p =
   S.Symb_Tbl.fold (fun i info acc -> T.Symb_Tbl.add i (flatten_func info) acc ) p T.Symb_Tbl.empty

@@ -14,6 +14,7 @@ type call        = SourceAst.call
 
 (* Programme principal : une table de symboles et un bloc de code *)
 type function_info = {
+  formals: string list;
   locals: identifier_info Symb_Tbl.t;
   code:   block;
 }
