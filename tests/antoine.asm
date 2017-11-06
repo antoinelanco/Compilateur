@@ -1,32 +1,34 @@
 .text
 	move $fp, $sp
-	addi $fp, $fp, -4
 	lw $a0, 0($a1)
 	jal atoi
-	sw $v0, 0($fp)
-	addi $sp, $sp, 0
-#_main_0
-	li $t3, 65
-#_main_1
-	move $t2, $t3
-#_main_2
-	add $t2, $t2, $t3
-#_main_3
-#_main_4
-	li $t0, 10
-	li $t1, 10
-	add $t3, $t1, $t0
-#_main_5
-#_main_6
-	move $a0, $t2
-	li $v0, 11
+	move $a0, $v0
+	jal main
+	li $v0, 10
 	syscall
-#_main_7
+main:
+	sw $fp, -4($sp)
+	sw $ra, -8($sp)
+	addi $sp, $sp, -8
+	move $fp, $sp
+	addi $sp, $sp, 0
+	lw $t2, 12($fp)
+#_prog_0
+	li $t3, 65
+#_prog_1
+	li $t2, 10
+#_prog_2
+	add $t2, $t3, $t2
+#_prog_3
+	move $t3, $t2
+#_prog_4
 	move $a0, $t3
 	li $v0, 11
 	syscall
-	li $v0, 10
-	syscall
+	lw $ra, 0($fp)
+	lw $fp, 4($fp)
+	addi $sp, $sp, 8
+	jr $ra
 atoi:
 	move $t0, $a0
 	li $t1, 0
