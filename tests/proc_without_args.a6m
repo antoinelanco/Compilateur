@@ -1,0 +1,21 @@
+main(integer x) (
+var integer i;
+var integer y;
+var integer z;
+y := 65;
+z := 66;
+i := 67;
+x := 68;
+fun(x,y);
+print(y);
+print(z);
+print(z);
+
+)
+
+fun(integer x,integer y) (
+
+print(x);
+print(y);
+
+)
