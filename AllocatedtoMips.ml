@@ -199,9 +199,9 @@ let generate_fun p =
     let nb_args = List.length p.formals in
     let args, index = List.fold_left
         (fun (v,i) arg -> match find_alloc arg with
-           | Reg r -> (v @@ lw r ((nb_args-i)*4 +8) ~$fp ,i+1)
-           | Stack o -> (v @@ lw ~$t0 (+8) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
-        (nop,0) p.formals
+           | Reg r -> (v @@ lw r ((nb_args-i)*4 +4) ~$fp ,i+1)
+           | Stack o -> (v @@ lw ~$t0 (+4) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
+        (nop,0) (List.rev p.formals)
     in
     args
   in

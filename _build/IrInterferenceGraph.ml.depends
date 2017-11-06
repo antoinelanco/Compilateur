@@ -1,1 +1,1 @@
-IrInterferenceGraph.ml: Graph Hashtbl IrAst IrLiveness List Printf Symb_Tbl VarSet
+IrInterferenceGraph.ml: Graph Hashtbl IrAst IrLiveness List Symb_Tbl VarSet

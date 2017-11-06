@@ -18,7 +18,7 @@ open IrLiveness
    vivantes en sortie de cette instruction. *)
 
 let add_interferences_formals_id g v_l =
-  let add_edge i1 i2 g = Printf.printf "add edge %s %s\n" i1 i2;Graph.add_edge g i1 i2 in
+  let add_edge i1 i2 g = Graph.add_edge g i1 i2 in
   let rec aux v_list acc =
     match v_list with
     | [] -> acc

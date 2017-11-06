@@ -12,8 +12,8 @@ fun:
 	addi $sp, $sp, -8
 	move $fp, $sp
 	addi $sp, $sp, 0
-	lw $t2, 16($fp)
 	lw $t3, 12($fp)
+	lw $t2, 8($fp)
 #_prog_0
 	move $a0, $t3
 	li $v0, 11
@@ -32,7 +32,7 @@ main:
 	addi $sp, $sp, -8
 	move $fp, $sp
 	addi $sp, $sp, 0
-	lw $t4, 12($fp)
+	lw $t4, 8($fp)
 #_prog_0
 	li $t3, 65
 #_prog_1

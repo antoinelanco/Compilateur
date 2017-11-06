@@ -12,7 +12,7 @@ main:
 	addi $sp, $sp, -8
 	move $fp, $sp
 	addi $sp, $sp, 0
-	lw $t2, 12($fp)
+	lw $t2, 8($fp)
 #_prog_0
 	li $t3, 0
 #_prog_1
@@ -59,8 +59,8 @@ print_ixe:
 	addi $sp, $sp, -8
 	move $fp, $sp
 	addi $sp, $sp, 0
-	lw $t3, 16($fp)
-	lw $t2, 12($fp)
+	lw $t3, 12($fp)
+	lw $t2, 8($fp)
 #_prog_0
 	sw $t2, -4($sp)
 	sw $t3, -8($sp)
@@ -97,15 +97,15 @@ print_ixeprime:
 	addi $sp, $sp, -8
 	move $fp, $sp
 	addi $sp, $sp, 0
-	lw $t2, 44($fp)
-	lw $t3, 40($fp)
-	lw $t4, 36($fp)
-	lw $t5, 32($fp)
-	lw $t6, 28($fp)
-	lw $t7, 24($fp)
-	lw $t8, 20($fp)
-	lw $t9, 16($fp)
-	lw $t0, 8($fp)
+	lw $t2, 40($fp)
+	lw $t3, 36($fp)
+	lw $t4, 32($fp)
+	lw $t5, 28($fp)
+	lw $t6, 24($fp)
+	lw $t7, 20($fp)
+	lw $t8, 16($fp)
+	lw $t9, 12($fp)
+	lw $t0, 4($fp)
 	sw $t0, -4($fp)
 #_prog_0
 	lw $a0, -4($fp)
