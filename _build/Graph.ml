@@ -70,13 +70,15 @@ let empty = {
   degrees = IntMap.empty;
 }
 
-exception InvalidNode
+exception InvalidNodeAddNode
+exception InvalidNodeAddEdge
 
 let defined_node g n = NodeMap.mem n g.neighbours
 
 let update_neighbour update_set g id1 id2 =
   (** What is the degree of id1? *)
   let id1_nbg =
+
     try NodeMap.find id1 g.neighbours
     with _ ->
       (Printf.printf "Node %s not found\n" id1;
@@ -119,7 +121,7 @@ let del_neighbour = update_neighbour NodeSet.remove
 let add_node g n =
   (** Second, we check that [ns] are not used by any other node. *)
   if defined_node g n then
-    raise InvalidNode;
+    raise InvalidNodeAddNode;
 
   (** Third, update maps. *)
   let neighbours =
@@ -136,7 +138,7 @@ let add_node g n =
     or [n2] does not exist, then [InvalidNode] is raised. *)
 let add_edge g n1 n2 =
   if not (defined_node g n1 && defined_node g n2) then
-    raise InvalidNode;
+    raise InvalidNodeAddEdge;
   if n1 = n2
   then g
   else let g = add_neighbour g n1 n2 in
@@ -203,4 +205,3 @@ let min_degree g =
     with Not_found -> None
   in
   aux g.degrees
-

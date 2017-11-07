@@ -22,8 +22,8 @@ let dce_step p =
   *)
 
   let var_updated = function
-    | Value(id,_) -> VarSet.singleton id
-    | Binop(id,_,_,_) -> VarSet.singleton id
+    | Value(id,_) | Binop(id,_,_,_) | FunCall(id,_,_) -> 
+      if id <> "result" then VarSet.singleton id else VarSet.empty
     | _ -> VarSet.empty
   in
 

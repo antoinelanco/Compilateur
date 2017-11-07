@@ -66,9 +66,63 @@ let generate_fun p =
 
 
   and generate_instr : AllocatedAst.instruction -> 'a Mips.asm = function
-    | FunCall(i,s,v) -> failwith "A completer"
-    | ProcCall(s,v) ->
+    | FunCall(i,s,v) ->
 
+      let save_args, nb = List.fold_left (fun (acc,i) e ->
+          (let reg1, inst1 = load_value_bis ~$t0 e in
+
+           acc
+           @@ inst1
+           @@ sw reg1 (-i * 4 - 4) ~$sp,i+1) )
+
+          (nop,0) v
+      in
+
+      let stack_args = nb*4 in
+
+      let max_reg = Symb_Tbl.fold
+          (fun id alloc_info acc ->
+             match alloc_info with
+               Reg s -> let index = int_of_string (String.sub s 2 1) in
+               if index > acc then index else acc
+             | _ -> acc)
+          p.locals 0
+      in
+
+      let save_reg reg =
+        let rec aux r =
+          match r with
+          | 2 -> sw ("$t"^string_of_int(r)) (-4) sp
+          | n -> aux (n-1) @@ sw ("$t"^string_of_int(r)) (-(n-1) * 4) sp
+        in
+        aux reg @@ addi sp sp (-(reg-1) * 4)
+      in
+
+      let load_reg reg =
+        let rec aux r =
+          match r with
+          | 2 -> lw ("$t"^string_of_int(r)) (-4) sp
+          | n -> aux (n-1) @@ lw ("$t"^string_of_int(r)) (-(n-1) * 4) sp
+        in
+        addi sp sp ((reg-1) * 4) @@ aux reg in
+
+      let load_res =
+        match find_alloc i with
+        | Reg r -> move r a0
+        | Stack o -> sw a0 o ~$fp
+      in
+
+      (*Etape 1*)
+      save_reg max_reg
+      @@ save_args
+      @@ addi sp sp (-stack_args)
+      @@ jal s
+      (*Etape 4*)
+      @@ addi sp sp stack_args
+      @@ load_reg max_reg
+      @@ load_res
+
+    | ProcCall(s,v) ->
 
       let save_args, nb = List.fold_left (fun (acc,i) e ->
           (let reg1, inst1 = load_value_bis ~$t0 e in
@@ -200,10 +254,19 @@ let generate_fun p =
     let args, index = List.fold_left
         (fun (v,i) arg -> match find_alloc arg with
            | Reg r -> (v @@ lw r ((nb_args-i)*4 +4) ~$fp ,i+1)
-           | Stack o -> (v @@ lw ~$t0 (+4) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
+           | Stack o -> (v @@ lw ~$t0 ((nb_args-i)*4 +4) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
         (nop,0) (List.rev p.formals)
     in
     args
+  in
+
+  let store_res =
+    if Symb_Tbl.mem "result" p.locals
+    then
+      match find_alloc "result" with
+      | Reg r -> move a0 r
+      | Stack o -> lw a0 o ~$fp
+    else nop
   in
 
   let start_fun = (*Etape 2*)
@@ -217,7 +280,8 @@ let generate_fun p =
   in
 
   let end_fun = (*Etape 3*)
-    lw ra 0 fp
+    store_res
+    @@ lw ra 0 fp
     @@ lw fp 4 fp
     @@ addi sp sp (-sp_off+8)
     @@ jr ra
@@ -229,7 +293,8 @@ let init =
   move fp sp
   @@ lw a0 0 a1
   @@ jal "atoi"
-  @@ move a0 v0
+  (*@@ move a0 v0*)
+  @@ sw v0 0 sp
   @@ jal "main"
 
 let close = li v0 10 @@ syscall

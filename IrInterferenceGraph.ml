@@ -17,6 +17,7 @@ open IrLiveness
    dues à une instruction donnée, connaissant l'ensemble des variables
    vivantes en sortie de cette instruction. *)
 
+
 let add_interferences_formals_id g v_l =
   let add_edge i1 i2 g = Graph.add_edge g i1 i2 in
   let rec aux v_list acc =
@@ -55,8 +56,8 @@ let add_interferences g lv_out_at_node = function
 let interference_graph p : Graph.t =
   (* D'abord, définir le graphe sans arêtes contenant un sommet pour chaque
      identifiant de la table des symboles. *)
-  let g1 = Symb_Tbl.fold (fun v _ acc -> Graph.add_node acc v) p.locals Graph.empty in
-  let g = add_interferences_formals_id g1 p.formals in
+  let g = Symb_Tbl.fold (fun v _ acc -> Graph.add_node acc v) p.locals Graph.empty in
+  let g = add_interferences_formals_id g p.formals in
   (* Ensuite, récupérer le résultat de l'analyse de vivacité. *)
   let _, lv_out = mk_lv p in
   (* Enfin, itérer sur l'ensemble des points du programme. *)

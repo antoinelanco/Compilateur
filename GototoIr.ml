@@ -72,7 +72,7 @@ let flatten_func p =
       let i = new_tmp() in
       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
           let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
-      es@[ T.FunCall(str,i,vs) ], T.Identifier(i)
+      es@[ T.FunCall(i,str,vs) ], T.Identifier(i)
 
     | Location(Identifier id) -> [], T.Identifier(id)
     | Literal(l) -> [], T.Literal(l)

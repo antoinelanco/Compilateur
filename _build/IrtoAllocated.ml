@@ -32,6 +32,7 @@ let allocate_main reg_flag prog =
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
           let i = NodeMap.find id g_color in
           match info with
+          | Return -> (current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack))
           | _ -> if i > 7
             then (current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack))
             else T.Reg ("$t" ^ string_of_int(i+2))

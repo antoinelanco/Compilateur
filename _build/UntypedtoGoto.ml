@@ -3,6 +3,9 @@
 module S = UntypedAst
 module T = GotoAst
 
+
+let cpt = ref 0
+
 let destructure_func p =
 
   (* new_label: unit -> string *)
@@ -10,7 +13,6 @@ let destructure_func p =
      utilisée pour créer des sauts. *)
 
   let new_label =
-    let cpt = ref 0 in
     fun () -> incr cpt; Printf.sprintf "_label_%i" !cpt
   in
 

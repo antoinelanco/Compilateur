@@ -2,17 +2,17 @@
 	move $fp, $sp
 	lw $a0, 0($a1)
 	jal atoi
-	move $a0, $v0
+	sw $v0, 0($sp)
 	jal main
 	li $v0, 10
 	syscall
 main:
-	addi $sp, $sp, -4
-	sw $ra, 4($sp)
-	sw $fp, 0($sp)
+	sw $fp, -4($sp)
+	sw $ra, -8($sp)
+	addi $sp, $sp, -8
 	move $fp, $sp
-	addi $sp, $sp, -4
 	addi $sp, $sp, 0
+	lw $t2, 8($fp)
 #_prog_0
 	li $t5, 1
 #_prog_1
@@ -87,6 +87,10 @@ _label_3:
 _label_1:
 #_prog_31
 	bnez $t5, _label_2
+	lw $ra, 0($fp)
+	lw $fp, 4($fp)
+	addi $sp, $sp, 8
+	jr $ra
 atoi:
 	move $t0, $a0
 	li $t1, 0

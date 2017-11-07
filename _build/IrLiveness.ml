@@ -161,19 +161,9 @@ let mk_lv p =
     List.iter lv_step_instruction (List.rev code)
   in
 
-
-  let var_formals = List.fold_left
-      (fun acc i -> VarSet.union acc (VarSet.singleton i))
-      VarSet.empty p.formals
-  in
-
-  (match code with
-   | (lab,_) :: t -> Hashtbl.replace lv_out lab var_formals
-   | _ -> failwith "rien");
-
-
   (* Répéter tant qu'il reste des changements *)
   while !change do
+    Printf.printf "IrLivness boucle\n";
     change := false;
     lv_step_main ();
   done;

@@ -1,3 +1,11 @@
 main(integer x) (
-  print(x);
+  print(rec_mul(x, x, 9));
+)
+
+integer rec_mul(integer i, integer a, integer cpt) (
+  if (cpt > 0) (
+    result := rec_mul(i + a, a, cpt - 1);
+  ) else (
+    result := i;
+  );
 )

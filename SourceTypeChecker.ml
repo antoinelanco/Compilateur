@@ -63,7 +63,7 @@ let typecheck_func p tab =
       List.iter2
         (fun (a,_) b -> comparetype a (type_expression b))
         infos.formals el;
-      match p.return with
+      match infos.return with
       | Some t -> t
       | None -> failwith "il ny a pas de type de retour (bug)"
 
