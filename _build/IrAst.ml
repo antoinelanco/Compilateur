@@ -17,6 +17,8 @@ type function_info = {
 }
 and prog = function_info Symb_Tbl.t
 
+and access = value * value
+
 and block = (label * instruction) list
 and instruction =
   | Value    of identifier * value                 (* Chargement d'une valeur *)
@@ -28,6 +30,10 @@ and instruction =
   | Comment  of string                             (* Commentaire             *)
   | FunCall  of identifier * string * value list
   | ProcCall of string * value list
+  | Load     of identifier * access
+  | Store    of access * value
+  | New      of identifier * value
+
 
 and identifier = string (* Identifiant d'un registre virtuel *)
 
@@ -43,9 +49,12 @@ let rec print_block = function
   | (l, i) :: b -> sprintf "%s: %s\n%s" l (print_instruction i) (print_block b)
 
 and print_instruction = function
+  | Load(i,(v1,v2)) -> sprintf "%s <- %s[%s]" i (print_value v1) (print_value v2)
+  | Store((v1,v2),v)-> sprintf "%s[%s] <- %s" (print_value v1) (print_value v2) (print_value v)
+  | New(i,v)        -> sprintf "%s[%s]" i (print_value v)
   | FunCall(i,s,vl) -> "FunCall" (*A Compmpleter*)
-  | ProcCall(s,vl) -> "ProcCall" (*A completer*)
-  | Value(dest, v)   -> sprintf "%s <- %s" dest (print_value v)
+  | ProcCall(s,vl)  -> "ProcCall" (*A completer*)
+  | Value(dest, v)  -> sprintf "%s <- %s" dest (print_value v)
   | Binop(dest, op, v1, v2) -> sprintf "%s <- %s %s %s"
                                  dest (print_value v1) (SourceAst.print_binop op) (print_value v2)
   | Print(v)         -> sprintf "print(%s)" (print_value v)

@@ -30,6 +30,7 @@ and identifier_info = { typ: typ; kind: identifier_kind }
 and typ =
   | TypInteger
   | TypBoolean
+  | TypArray of typ
 
 (* Un bloc de code est une liste d'instructions *)
 and block = instruction list
@@ -45,13 +46,15 @@ and expression =
   | Literal   of literal                         (* Valeur immédiate   *)
   | Location  of location                        (* Valeur en mémoire  *)
   | Binop     of binop * expression * expression (* Opération binaire  *)
+  | NewArray  of expression * typ
 
 and literal =
   | Int  of int  (* Constante entière   *)
   | Bool of bool (* Constante booléenne *)
 
 and location =
-  | Identifier of string (* Variable en mémoire *)
+  | ArrayAccess of string * expression
+  | Identifier  of string (* Variable en mémoire *)
 
 and binop =
   | Add (* +  *) | Mult (* *  *) | Sub (* - *) | Div (* / *)
@@ -65,9 +68,10 @@ and binop =
 *)
 open Printf
 
-let print_typ = function
+let rec print_typ = function
   | TypInteger -> "integer"
   | TypBoolean -> "boolean"
+  | TypArray t -> sprintf "tableau de %s" (print_typ t)
 let print_identifier_info i = print_typ i.typ
 
 let print_symb_tbl tbl =
@@ -80,6 +84,7 @@ let print_literal = function
   | Bool b -> if b then "true" else "false"
 let print_location = function
   | Identifier x -> x
+  | ArrayAccess (id,e) -> ""
 let print_binop = function
   | Add  -> "+"
   | Mult -> "*"
@@ -94,6 +99,7 @@ let print_binop = function
   | And  -> "&&"
   | Or   -> "||"
 let rec print_expression = function
+  | NewArray(e, t) -> sprintf "Creation d'un tableau de %s de taille %s" (print_typ t) (print_expression e)
   | FunCall c -> "FunCall" (*A completer*)
   | Literal lit -> print_literal lit
   | Location id -> print_location id

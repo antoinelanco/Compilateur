@@ -44,14 +44,13 @@ let flatten_func p =
 
     | S.Set(l,e) ->
       let ce, ve = flatten_expression e in
-      let i = match l with
-        | Identifier(s) -> s
-      in
-      ce @ [ T.Value(i,ve) ]
-
+      (match l with
+      | Identifier(s) -> ce @ [ T.Value(s,ve) ]
+      | ArrayAccess(l, e1) -> let ce1,ve1 = flatten_expression e1 in
+        ce @ ce1 @ [ T.Store( (Identifier l,ve1),ve ) ])
     | S.CondGoto(e,l) ->
       let ce, ve = flatten_expression e in
-      ce @ [ T.CondGoto(ve,l)]
+      ce @ [ T.CondGoto(ve,l) ]
     | S.Label(l) -> [ T.Label(l) ]
     | S.Goto(l) -> [ T.Goto(l) ]
     | S.Comment(s) -> [ T.Comment(s) ]
@@ -74,7 +73,18 @@ let flatten_func p =
           let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
       es@[ T.FunCall(i,str,vs) ], T.Identifier(i)
 
-    | Location(Identifier id) -> [], T.Identifier(id)
+    | Location(l) ->
+        (match l with
+        | Identifier(s) -> [], T.Identifier(s)
+        | ArrayAccess(loc,e) ->
+          let ce,ve = flatten_expression e in
+          let i = new_tmp() in
+          ce @ [ T.Load(i,(Identifier loc,ve)) ], T.Identifier(i))
+
+    | NewArray(e,t) ->
+      let ce,ve = flatten_expression e in
+      let i = new_tmp() in
+      ce @ [ T.New(i,ve) ], T.Identifier (i)
     | Literal(l) -> [], T.Literal(l)
     | Binop(b,e1,e2) -> let i = new_tmp() in
       let ce1, ve1 = flatten_expression e1 in

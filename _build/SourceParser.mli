@@ -26,11 +26,13 @@ type token =
   | EOF
   | END
   | ELSE
+  | EB
   | DIV
   | DEC
   | COMMA
   | BOOLEAN
   | BEGIN
+  | BB
   | AND
   | ADD
 

@@ -171,6 +171,9 @@ let generate_fun p =
       @@ addi sp sp stack_args
       @@ load_reg max_reg
 
+    | Load (_,_) -> nop
+    | Store (_,_) -> nop
+    | New (_,_) -> nop
     | Print(v) -> load_value ~$a0 v @@ li ~$v0 11 @@ syscall
     | Goto(l) -> b l
     | Label(l) -> label l

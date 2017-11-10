@@ -48,6 +48,9 @@ let typecheck_func p tab =
      expressions et renvoient leur type. *)
   (* type_expression: expression -> typ *)
   and type_expression = function
+
+    | NewArray(e,t) -> t
+
     | Literal(lit)  -> type_literal lit
 
     | Location(loc) -> type_location loc
@@ -75,6 +78,7 @@ let typecheck_func p tab =
   (* type_location: location -> typ *)
   and type_location = function
     | Identifier(id) -> (Symb_Tbl.find id symb_tbl).typ
+    | ArrayAccess(s,e) -> (Symb_Tbl.find s symb_tbl).typ
 
   (* [type_binop] renvoie le type des opérandes et le type du résultat
      d'un opérateur binaire. *)

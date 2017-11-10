@@ -163,7 +163,6 @@ let mk_lv p =
 
   (* Répéter tant qu'il reste des changements *)
   while !change do
-    Printf.printf "IrLivness boucle\n";
     change := false;
     lv_step_main ();
   done;

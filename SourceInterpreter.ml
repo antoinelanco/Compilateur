@@ -60,3 +60,4 @@ and eval_literal env = function
 
 and eval_location env = function
   | Identifier(id) -> State.find id env
+  | ArrayAccess(s,e) -> failwith "A completer"

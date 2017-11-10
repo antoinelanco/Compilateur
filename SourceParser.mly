@@ -18,6 +18,7 @@
 %token INC DEC
 %token ADD MULT SUB DIV EQ NEQ LT LE MT ME AND OR SET
 %token EOF
+%token BB EB
 
 %left AND OR
 %left EQ NEQ LT LE MT ME
@@ -62,6 +63,7 @@ prog:
 typs:
 | INT { TypInteger }
 | BOOLEAN { TypBoolean }
+| BB; EB; t=typs { TypArray(t) }
 
 var_decls:
 | (* empty *) { Symb_Tbl.empty }
@@ -149,12 +151,18 @@ instruction:
 
 expression:
 | c=call { FunCall(c) }
-| id=IDENT { Location( Identifier id ) }
+| BB; e=expression; EB; t=typs { NewArray(e,t) }
+| loc=location { Location(loc) }
 | i=LITINT { Literal(Int i) }
 | TRUE { Literal(Bool true) }
 | FALSE { Literal(Bool false) }
 | e1=expression; b=binop; e2=expression   { Binop(b,e1,e2) }
 ;
+
+location:
+| id=IDENT { Identifier(id) }
+| id=IDENT; BB; e=expression; EB { ArrayAccess(id,e) }
+
 
 call:
 | id=IDENT; BEGIN; a=arg; END { id, a }
