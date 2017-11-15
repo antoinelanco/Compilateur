@@ -1,6 +1,6 @@
 main(integer x) (
   var []integer i;
   i := [10]integer;
-  i[3] := 65;
-  print(i[3]);
+  i[0] := 65;
+  print(i[0]);
 )

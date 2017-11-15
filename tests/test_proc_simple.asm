@@ -65,11 +65,11 @@ print_ixe:
 	addi $sp, $sp, 0
 	lw $t2, 8($fp)
 #_prog_0
-	move $t3, $t2
+	sw $t2, -4($fp)
+	lw $a0, -4($fp)
 	lw $ra, 0($fp)
 	lw $fp, 4($fp)
 	addi $sp, $sp, 8
-	move $a0, $t3
 	jr $ra
 atoi:
 	move $t0, $a0
