@@ -6,6 +6,38 @@
 	jal main
 	li $v0, 10
 	syscall
+fun:
+	sw $fp, -4($sp)
+	sw $ra, -8($sp)
+	addi $sp, $sp, -8
+	move $fp, $sp
+	addi $sp, $sp, 0
+	lw $t3, 12($fp)
+	lw $t2, 8($fp)
+#_prog_0
+	li $t5, 10
+#_prog_1
+	li $t4, 20
+#_prog_2
+	move $a0, $t5
+	li $v0, 11
+	syscall
+#_prog_3
+	move $a0, $t4
+	li $v0, 11
+	syscall
+#_prog_4
+	move $a0, $t3
+	li $v0, 11
+	syscall
+#_prog_5
+	move $a0, $t2
+	li $v0, 11
+	syscall
+	lw $ra, 0($fp)
+	lw $fp, 4($fp)
+	addi $sp, $sp, 8
+	jr $ra
 main:
 	sw $fp, -4($sp)
 	sw $ra, -8($sp)
@@ -14,15 +46,15 @@ main:
 	addi $sp, $sp, 0
 	lw $t2, 8($fp)
 #_prog_0
-	li $a0, 10
 	li $t0, 4
-	mul $a1, $a0, $t0
+	mul $a1, $t2, $t0
 	addi $a0, $a1, 4
 	li $v0, 9
 	syscall
 	sw $a0, 0($v0)
-	move $t2, $v0
+	move $t3, $v0
 #_prog_1
+	move $t2, $t3
 #_prog_2
 	li $a0, 65
 	li $a1, 0
@@ -40,6 +72,20 @@ main:
 	move $a0, $t2
 	li $v0, 11
 	syscall
+#_prog_5
+	sw $t2, -4($sp)
+	sw $t3, -8($sp)
+	addi $sp, $sp, -8
+	li $t0, 50
+	sw $t0, -4($sp)
+	li $t0, 60
+	sw $t0, -8($sp)
+	addi $sp, $sp, -8
+	jal fun
+	addi $sp, $sp, 8
+	addi $sp, $sp, 8
+	lw $t2, -4($sp)
+	lw $t3, -8($sp)
 	lw $ra, 0($fp)
 	lw $fp, 4($fp)
 	addi $sp, $sp, 8

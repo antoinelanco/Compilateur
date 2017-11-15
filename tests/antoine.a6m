@@ -1,6 +1,20 @@
 main(integer x) (
   var []integer i;
-  i := [10]integer;
+  i := [x]integer;
   i[0] := 65;
   print(i[0]);
+  fun(50,60);
+)
+
+fun(integer x, integer y) (
+  var integer a;
+  var integer b;
+
+  a := 10;
+  b := 20;
+
+  print(a);
+  print(b);
+  print(x);
+  print(y);
 )

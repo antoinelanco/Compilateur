@@ -39,10 +39,17 @@ let add_interferences_formals g v_l =
   in aux v_l g
 
 let add_interferences g lv_out_at_node = function
-  | Binop(a, _, Identifier v1, Identifier v2) ->
+  | Binop(a, _, Identifier v1, Identifier v2) | Load(a,(Identifier v1, Identifier v2)) ->
     Graph.add_edge (VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g) v1 v2
-  | Binop (a,_,_,_) | Value(a, _) ->
+
+  | New(a, Identifier v2) ->
+    Graph.add_edge (VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g) a v2
+
+  | Binop (a,_,_,_) | Value(a,_) | New(a,_) | Load(a,_) ->
     VarSet.fold (fun e acc -> Graph.add_edge acc a e) lv_out_at_node g
+
+
+
   | ProcCall(_,v) -> add_interferences_formals g v
   | FunCall(i,_,v) ->
     let tmp = VarSet.fold
@@ -50,6 +57,25 @@ let add_interferences g lv_out_at_node = function
         lv_out_at_node g
     in
     add_interferences_formals tmp v
+
+  | Store((Identifier v1,Identifier v2),Identifier v) ->
+
+    let tmp = VarSet.fold (fun e acc -> Graph.add_edge acc v1 e) lv_out_at_node g in
+    let tmp = Graph.add_edge tmp v1 v2 in
+    let tmp = Graph.add_edge tmp v v2 in
+    let tmp = Graph.add_edge tmp v v1 in
+    tmp
+
+  | Store((Identifier v1,Identifier v2),_) ->
+
+    let tmp = VarSet.fold (fun e acc -> Graph.add_edge acc v1 e) lv_out_at_node g in
+    Graph.add_edge tmp v1 v2
+
+
+  | Store((Identifier v1,_),Identifier v) ->
+    let tmp = VarSet.fold (fun e acc -> Graph.add_edge acc v1 e) lv_out_at_node g in
+    Graph.add_edge tmp v1 v
+
   | _ -> g
 
 (* Fonction principale, qui itère sur l'ensemble des points du programme. *)
