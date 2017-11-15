@@ -1,13 +1,6 @@
 main(integer x) (
-
-var integer i;
-var integer j;
-
-i := 65;
-j := 10;
-
-i := i+j;
-
-print(i);
-
+  var []integer i;
+  i := [10]integer;
+  i[3] := 65;
+  print(i[3]);
 )

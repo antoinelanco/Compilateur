@@ -43,7 +43,7 @@ let generate_fun p =
 
   and store_stack o : AllocatedAst.value -> 'a Mips.asm = function
     | Identifier(id) -> (match find_alloc id with
-        | Stack o -> lw ~$t0 o ~$fp @@ sw ~$t0 o ~$fp
+        | Stack on -> lw ~$t0 on ~$fp @@ sw ~$t0 o ~$fp
         | Reg r1 -> sw r1 o ~$fp)
 
     | Literal(l) -> (match l with
@@ -171,9 +171,59 @@ let generate_fun p =
       @@ addi sp sp stack_args
       @@ load_reg max_reg
 
-    | Load (_,_) -> nop
-    | Store (_,_) -> nop
-    | New (_,_) -> nop
+    | Load (id,(v1,v2)) ->
+
+      let ce1,ve1 = load_value_bis ~$a1 v2 in
+      ve1 @@
+      li ~$a0 4 @@
+      mul ce1 ce1 ~$a0 @@
+      (match v1 with
+       | Identifier(idd) -> (match find_alloc idd with
+           | Stack o ->
+             lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ce1 @@
+             (match find_alloc id with
+              | Stack oo -> lw ~$t1 4 ~$t0 @@ sw ~$t1 oo ~$fp
+              | Reg rr -> sw rr 4 ~$t0)
+
+           | Reg r ->
+             add r r ce1 @@ addi r r 4 @@
+             (match find_alloc id with
+              | Stack oo -> sw r oo ~$fp
+              | Reg rr -> move rr r ) )
+       | _ -> failwith "Lit[n] pas possible")
+
+
+    | Store ((v1,v2),v) ->
+
+      let ce1,ve1 = load_value_bis ~$a0 v in
+      let ce2,ve2 = load_value_bis ~$a1 v2 in
+      ve1
+      @@ ve2
+      @@ li ~$t1 4
+      @@ mul ce2 ce2 ~$t1
+      @@ (match v1 with
+          | Identifier(id) -> (match find_alloc id with
+              | Stack o -> lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ce2 @@ sw ce1 4 ~$t0
+              | Reg r -> add r r ce2 @@ sw ce1 4 r)
+          | _ -> failwith "Lit[n] pas possible")
+
+
+    | New (id,v) ->
+
+      let ce1,ve1 = load_value_bis ~$a0 v in
+      ve1
+      @@ li ~$t0 4
+      @@ mul ~$a1 ce1 ~$t0
+      @@ addi ~$a0 ~$a1 4
+      @@ li ~$v0 9
+      @@ syscall
+      @@ sw ~$a0 0 ~$v0
+      @@ (match find_alloc id with
+          | Stack o -> sw ~$v0 o ~$fp
+          | Reg r1 -> move r1 v0)
+
+
+
     | Print(v) -> load_value ~$a0 v @@ li ~$v0 11 @@ syscall
     | Goto(l) -> b l
     | Label(l) -> label l

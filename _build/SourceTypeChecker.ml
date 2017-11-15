@@ -2,13 +2,13 @@ open SourceAst
 open Printf
 
 (* Rapports d'erreurs *)
-exception Type_error of typ * typ
+exception Type_error of typ * typ * string * string
 
 (* comparetype: typ -> typ -> unit
    Lève une exception si les types diffèrent. *)
 let comparetype t1 t2 =
   if t1 <> t2
-  then raise (Type_error(t1, t2))
+  then raise (Type_error(t1, t2, (print_typ t1), (print_typ t2)))
 
 (* Vérification des types d'un programme *)
 let typecheck_func p tab =
@@ -22,6 +22,7 @@ let typecheck_func p tab =
   (* typecheck_block: block -> unit *)
   let rec typecheck_block b = List.iter typecheck_instruction b
 
+
   (* typecheck_instruction: instruction -> unit *)
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
@@ -30,9 +31,7 @@ let typecheck_func p tab =
         (fun (a,_) b -> comparetype a (type_expression b))
         infos.formals el
 
-    | Set(l, e) ->
-      comparetype (type_location l) (type_expression e)
-
+    | Set(l, e) -> comparetype (type_location l) (type_expression e)
     | While(e, b) ->
       comparetype TypBoolean (type_expression e);
       typecheck_block b
@@ -49,7 +48,7 @@ let typecheck_func p tab =
   (* type_expression: expression -> typ *)
   and type_expression = function
 
-    | NewArray(e,t) -> t
+    | NewArray(e,t) -> TypArray t
 
     | Literal(lit)  -> type_literal lit
 
@@ -78,7 +77,12 @@ let typecheck_func p tab =
   (* type_location: location -> typ *)
   and type_location = function
     | Identifier(id) -> (Symb_Tbl.find id symb_tbl).typ
-    | ArrayAccess(s,e) -> (Symb_Tbl.find s symb_tbl).typ
+    | ArrayAccess(s,e) -> let ty = (Symb_Tbl.find s symb_tbl).typ in
+      (match ty with
+       | TypArray n -> n
+       | _ -> failwith "Tableau forcement type TypArray of typ")
+
+
 
   (* [type_binop] renvoie le type des opérandes et le type du résultat
      d'un opérateur binaire. *)

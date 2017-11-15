@@ -140,7 +140,7 @@ instructions:
 instruction:
 | c=call { [ProcCall(c)] }
 | PRINT; BEGIN; e=expression; END         { [Print(e)] }
-| id=IDENT; SET; e=expression { [Set(Identifier id,e)] }
+| l=location; SET; e=expression { [Set(l,e)] }
 | id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
 | id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
 | WHILE; BEGIN; e=expression; END ;BEGIN; is=instructions; END { [While(e,is)] }
@@ -153,11 +153,14 @@ expression:
 | c=call { FunCall(c) }
 | BB; e=expression; EB; t=typs { NewArray(e,t) }
 | loc=location { Location(loc) }
-| i=LITINT { Literal(Int i) }
-| TRUE { Literal(Bool true) }
-| FALSE { Literal(Bool false) }
+| i=literal { Literal(i) }
 | e1=expression; b=binop; e2=expression   { Binop(b,e1,e2) }
 ;
+
+literal:
+| i=LITINT { Int i }
+| TRUE { Bool true }
+| FALSE { Bool false }
 
 location:
 | id=IDENT { Identifier(id) }
