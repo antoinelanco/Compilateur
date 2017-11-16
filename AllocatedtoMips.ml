@@ -173,18 +173,18 @@ let generate_fun p =
 
     | Load (id,(v1,v2)) ->
 
-      let ce1,ve1 = load_value_bis ~$a1 v2 in
+      let ce1,ve1 = load_value_bis ~$t0 v2 in
 
 
       ve1
-      @@ li ~$a0 4
-      @@ mul ~$a0 ce1 ~$a0
+      @@ li ~$t1 4
+      @@ mul ~$t1 ce1 ~$t1
 
 
       @@ (match v1 with
           | Identifier(idd) -> (match find_alloc idd with
-              | Stack o -> lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ~$a0
-              | Reg r -> add ~$t0 r ~$a0 )
+              | Stack o -> lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ~$t1
+              | Reg r -> add ~$t0 r ~$t1 )
           | _ -> failwith "Lit[n] pas possible")
 
 
@@ -194,26 +194,26 @@ let generate_fun p =
 
     | Store ((v1,v2),v) ->
 
-      let ce1,ve1 = load_value_bis ~$a0 v in
-      let ce2,ve2 = load_value_bis ~$a1 v2 in
-      ve1
-      @@ ve2
+      let ce1,ve1 = load_value_bis ~$t1 v in
+      let ce2,ve2 = load_value_bis ~$t0 v2 in
+
+      ve2
       @@ li ~$t1 4
       @@ mul ~$t1 ce2 ~$t1
       @@ (match v1 with
           | Identifier(id) -> (match find_alloc id with
-              | Stack o -> lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ~$t1 @@ sw ce1 4 ~$t0
-              | Reg r -> add ~$t0 r ~$t1 @@ sw ce1 4 ~$t0)
+              | Stack o -> lw ~$t0 o ~$fp @@ add ~$t0 ~$t0 ~$t1 @@ ve1 @@ sw ce1 4 ~$t0
+              | Reg r -> add ~$t0 r ~$t1 @@ ve1 @@ sw ce1 4 ~$t0)
           | _ -> failwith "Lit[n] pas possible")
 
 
     | New (id,v) ->
 
-      let ce1,ve1 = load_value_bis ~$a0 v in
+      let ce1,ve1 = load_value_bis ~$t1 v in
       ve1
       @@ li ~$t0 4
-      @@ mul ~$a1 ce1 ~$t0
-      @@ addi ~$a0 ~$a1 4
+      @@ mul ~$t0 ce1 ~$t0
+      @@ addi ~$a0 ~$t0 4
       @@ li ~$v0 9
       @@ syscall
       @@ sw ~$a0 0 ~$v0
