@@ -11,7 +11,7 @@
 /*%token MAIN*/
 %token VAR
 %token PRINT
-%token WHILE FOR
+%token WHILE FOR TO
 %token INT BOOLEAN
 %token IF ELSE /*THEN*/
 %token TRUE FALSE
@@ -146,8 +146,14 @@ instruction:
 | WHILE; BEGIN; e=expression; END ;BEGIN; is=instructions; END { [While(e,is)] }
 | IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
 | IF; BEGIN; e=expression; END; BEGIN; is=instructions; END { [If(e,is,[])] }
-| FOR; BEGIN; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI; id2=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
-    { let block = bl @ [Set(Identifier id2, e3)] in [Set(Identifier id1, e1);While(e2, block)] }
+| FOR; BEGIN; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
+    id2=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
+  { let block = bl @ [Set(Identifier id2, e3)] in
+     [Set(Identifier id1, e1);While(e2, block)] }
+
+| FOR; BEGIN; id=IDENT; SET; i1=literal; TO; i2=literal; END; BEGIN; bl=instructions; END;
+  { let block = bl @ [Set(Identifier id, Binop(Add,Location( Identifier id ),Literal(Int 1)))] in
+     [Set(Identifier id, Literal i1);While(Binop(Le,Location(Identifier id),Literal i2), block)] }
 
 expression:
 | c=call { FunCall(c) }

@@ -14,6 +14,7 @@
         "boolean",  BOOLEAN;
         "while",    WHILE;
         "for",      FOR;
+        "to",       TO;
       	"print",    PRINT;
         "if",       IF;
         (*"then",     THEN;*)

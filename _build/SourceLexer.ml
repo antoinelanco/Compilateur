@@ -15,6 +15,7 @@
         "boolean",  BOOLEAN;
         "while",    WHILE;
         "for",      FOR;
+        "to",       TO;
       	"print",    PRINT;
         "if",       IF;
         (*"then",     THEN;*)
@@ -27,7 +28,7 @@
       with Not_found -> IDENT(s)
 
 
-# 31 "SourceLexer.ml"
+# 32 "SourceLexer.ml"
 let __ocaml_lex_tables = {
   Lexing.lex_base = 
    "\000\000\229\255\230\255\002\000\001\000\001\000\003\000\004\000\
@@ -157,137 +158,137 @@ let rec token lexbuf =
 and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 36 "SourceLexer.mll"
+# 37 "SourceLexer.mll"
       ( token lexbuf )
-# 163 "SourceLexer.ml"
+# 164 "SourceLexer.ml"
 
   | 1 ->
-# 38 "SourceLexer.mll"
+# 39 "SourceLexer.mll"
       ( new_line lexbuf; token lexbuf )
-# 168 "SourceLexer.ml"
+# 169 "SourceLexer.ml"
 
   | 2 ->
-# 40 "SourceLexer.mll"
+# 41 "SourceLexer.mll"
       ( id_or_keyword (lexeme lexbuf) )
-# 173 "SourceLexer.ml"
+# 174 "SourceLexer.ml"
 
   | 3 ->
-# 42 "SourceLexer.mll"
+# 43 "SourceLexer.mll"
       ( LITINT (int_of_string (lexeme lexbuf)) )
-# 178 "SourceLexer.ml"
+# 179 "SourceLexer.ml"
 
   | 4 ->
-# 44 "SourceLexer.mll"
+# 45 "SourceLexer.mll"
       ( BEGIN )
-# 183 "SourceLexer.ml"
+# 184 "SourceLexer.ml"
 
   | 5 ->
-# 46 "SourceLexer.mll"
+# 47 "SourceLexer.mll"
       ( END )
-# 188 "SourceLexer.ml"
+# 189 "SourceLexer.ml"
 
   | 6 ->
-# 48 "SourceLexer.mll"
+# 49 "SourceLexer.mll"
       ( BB )
-# 193 "SourceLexer.ml"
+# 194 "SourceLexer.ml"
 
   | 7 ->
-# 50 "SourceLexer.mll"
+# 51 "SourceLexer.mll"
       ( EB )
-# 198 "SourceLexer.ml"
+# 199 "SourceLexer.ml"
 
   | 8 ->
-# 52 "SourceLexer.mll"
+# 53 "SourceLexer.mll"
       ( SEMI )
-# 203 "SourceLexer.ml"
+# 204 "SourceLexer.ml"
 
   | 9 ->
-# 54 "SourceLexer.mll"
+# 55 "SourceLexer.mll"
       ( COMMA )
-# 208 "SourceLexer.ml"
+# 209 "SourceLexer.ml"
 
   | 10 ->
-# 56 "SourceLexer.mll"
+# 57 "SourceLexer.mll"
       ( ADD )
-# 213 "SourceLexer.ml"
+# 214 "SourceLexer.ml"
 
   | 11 ->
-# 58 "SourceLexer.mll"
+# 59 "SourceLexer.mll"
       ( INC )
-# 218 "SourceLexer.ml"
+# 219 "SourceLexer.ml"
 
   | 12 ->
-# 60 "SourceLexer.mll"
+# 61 "SourceLexer.mll"
       ( SUB )
-# 223 "SourceLexer.ml"
+# 224 "SourceLexer.ml"
 
   | 13 ->
-# 62 "SourceLexer.mll"
+# 63 "SourceLexer.mll"
       ( DEC )
-# 228 "SourceLexer.ml"
+# 229 "SourceLexer.ml"
 
   | 14 ->
-# 64 "SourceLexer.mll"
+# 65 "SourceLexer.mll"
       ( MULT )
-# 233 "SourceLexer.ml"
+# 234 "SourceLexer.ml"
 
   | 15 ->
-# 66 "SourceLexer.mll"
+# 67 "SourceLexer.mll"
       ( DIV )
-# 238 "SourceLexer.ml"
+# 239 "SourceLexer.ml"
 
   | 16 ->
-# 68 "SourceLexer.mll"
+# 69 "SourceLexer.mll"
       ( EQ )
-# 243 "SourceLexer.ml"
+# 244 "SourceLexer.ml"
 
   | 17 ->
-# 70 "SourceLexer.mll"
+# 71 "SourceLexer.mll"
       ( NEQ )
-# 248 "SourceLexer.ml"
+# 249 "SourceLexer.ml"
 
   | 18 ->
-# 72 "SourceLexer.mll"
+# 73 "SourceLexer.mll"
       ( LT )
-# 253 "SourceLexer.ml"
+# 254 "SourceLexer.ml"
 
   | 19 ->
-# 74 "SourceLexer.mll"
+# 75 "SourceLexer.mll"
       ( LE )
-# 258 "SourceLexer.ml"
+# 259 "SourceLexer.ml"
 
   | 20 ->
-# 76 "SourceLexer.mll"
+# 77 "SourceLexer.mll"
       ( MT )
-# 263 "SourceLexer.ml"
+# 264 "SourceLexer.ml"
 
   | 21 ->
-# 78 "SourceLexer.mll"
+# 79 "SourceLexer.mll"
       ( ME )
-# 268 "SourceLexer.ml"
+# 269 "SourceLexer.ml"
 
   | 22 ->
-# 80 "SourceLexer.mll"
+# 81 "SourceLexer.mll"
       ( AND )
-# 273 "SourceLexer.ml"
+# 274 "SourceLexer.ml"
 
   | 23 ->
-# 82 "SourceLexer.mll"
+# 83 "SourceLexer.mll"
       ( OR )
-# 278 "SourceLexer.ml"
+# 279 "SourceLexer.ml"
 
   | 24 ->
-# 84 "SourceLexer.mll"
+# 85 "SourceLexer.mll"
       ( SET )
-# 283 "SourceLexer.ml"
+# 284 "SourceLexer.ml"
 
   | 25 ->
-# 86 "SourceLexer.mll"
+# 87 "SourceLexer.mll"
       ( EOF )
-# 288 "SourceLexer.ml"
+# 289 "SourceLexer.ml"
 
   | 26 ->
-# 88 "SourceLexer.mll"
+# 89 "SourceLexer.mll"
       (
         let start_p = lexeme_start_p lexbuf in
         raise (Error ("Unknow char(s) \""
@@ -298,7 +299,7 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
                          ^ (string_of_int start_p.pos_lnum)
                          ^ ", col "
                          ^ (string_of_int (start_p.pos_cnum - start_p.pos_bol)))))
-# 302 "SourceLexer.ml"
+# 303 "SourceLexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
@@ -308,24 +309,24 @@ and comment lexbuf =
 and __ocaml_lex_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 101 "SourceLexer.mll"
+# 102 "SourceLexer.mll"
       ( comment lexbuf; comment lexbuf )
-# 314 "SourceLexer.ml"
+# 315 "SourceLexer.ml"
 
   | 1 ->
-# 103 "SourceLexer.mll"
+# 104 "SourceLexer.mll"
       ( () )
-# 319 "SourceLexer.ml"
+# 320 "SourceLexer.ml"
 
   | 2 ->
-# 105 "SourceLexer.mll"
+# 106 "SourceLexer.mll"
       ( comment lexbuf )
-# 324 "SourceLexer.ml"
+# 325 "SourceLexer.ml"
 
   | 3 ->
-# 107 "SourceLexer.mll"
+# 108 "SourceLexer.mll"
       ( failwith "Unterminated comment" )
-# 329 "SourceLexer.ml"
+# 330 "SourceLexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_comment_rec lexbuf __ocaml_lex_state
