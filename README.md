@@ -27,7 +27,19 @@
 
  ### Acte II
   #### TP5)
-  - 1.Description
+  - 1 Description
+    - 1.1 Extension du langage source
+      - 1.1.1 Lexique
+      - 1.1.2 Grammaire
+      - 1.1.3 Semantique
+    - 1.2 Extention du compilateur
+      - 1.2.1 Syntaxes abstraites
+      - 1.2.2 Convertions d'appel
+  - 3 Extensions
+    - ...
+
+  #### TP6)
+  - 1 Description
 
 
  ## Fait pas encore fonctionnel :
