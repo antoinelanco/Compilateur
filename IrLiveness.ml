@@ -150,6 +150,7 @@ let mk_lv p =
   in
 
   let lv_step_instruction (lab, instr) =
+    (*Printf.printf "Boucle IrLivness %s\n" lab;*)
     (* Récupération de la liste des successeurs *)
     let succs = Hashtbl.find_all succ lab in
     lv_out_to_lv_in lab instr;

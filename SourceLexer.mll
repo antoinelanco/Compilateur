@@ -49,6 +49,10 @@ rule token = parse
       { BB }
   | "]"
       { EB }
+  | "{"
+      { BA }
+  | "}"
+      { EA }
   | ";"
       { SEMI }
   | ","

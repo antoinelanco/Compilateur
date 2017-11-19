@@ -18,7 +18,7 @@
 %token INC DEC
 %token ADD MULT SUB DIV EQ NEQ LT LE MT ME AND OR SET
 %token EOF
-%token BB EB
+%token BB EB BA EA
 
 %left AND OR
 %left EQ NEQ LT LE MT ME

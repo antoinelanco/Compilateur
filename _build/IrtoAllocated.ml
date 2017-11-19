@@ -7,6 +7,7 @@ let allocate_main reg_flag prog =
   let current_offset_stack = ref 0 in
 
   let tbl p =
+    current_offset_stack := 0;
     if reg_flag
     (*Version 1*)
     (* then
@@ -42,10 +43,12 @@ let allocate_main reg_flag prog =
       (* Tout sur la pile *)
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
           match info with
-          | _ -> current_offset_stack := !current_offset_stack - 4; T.Stack (!current_offset_stack)
+          | _ -> current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack)
         ) p.S.locals
   in
 
-  S.Symb_Tbl.fold (fun i info acc ->
-      T.Symb_Tbl.add i {T.formals = info.S.formals; T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code} acc)
+  S.Symb_Tbl.fold (fun i info acc -> Printf.printf "Boucle IrtoAllocated %s \n" i;
+                    T.Symb_Tbl.add i
+                      {T.formals = info.S.formals; T.locals = tbl info; T.offset= !current_offset_stack; T.code = info.S.code}
+                      acc)
     prog T.Symb_Tbl.empty

@@ -1,1 +1,1 @@
-IrtoAllocated.ml: AllocatedAst GraphColoring IrAst IrInterferenceGraph NodeMap
+IrtoAllocated.ml: AllocatedAst GraphColoring IrAst IrInterferenceGraph NodeMap Printf

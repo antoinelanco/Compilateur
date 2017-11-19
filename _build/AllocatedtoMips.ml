@@ -73,12 +73,13 @@ let generate_fun p =
 
            acc
            @@ inst1
-           @@ sw reg1 (-i * 4 - 4) ~$sp,i+1) )
+           @@ (if i > 3 then sw reg1 ( -(i-4) * 4 - 4 ) ~$sp
+               else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v
       in
 
-      let stack_args = nb*4 in
+      let stack_args = (nb-4)*4 in
 
       let max_reg = Symb_Tbl.fold
           (fun id alloc_info acc ->
@@ -108,8 +109,8 @@ let generate_fun p =
 
       let load_res =
         match find_alloc i with
-        | Reg r -> move r a0
-        | Stack o -> sw a0 o ~$fp
+        | Reg r -> move r v0
+        | Stack o -> sw v0 o ~$fp
       in
 
       (*Etape 1*)
@@ -129,7 +130,8 @@ let generate_fun p =
 
            acc
            @@ inst1
-           @@ sw reg1 (-i * 4 - 4) ~$sp,i+1) )
+           @@ (if i > 3 then sw reg1 ( -(i-4) * 4 - 4 ) ~$sp
+               else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v
       in
@@ -305,8 +307,11 @@ let generate_fun p =
     let nb_args = List.length p.formals in
     let args, index = List.fold_left
         (fun (v,i) arg -> match find_alloc arg with
-           | Reg r -> (v @@ lw r ((nb_args-i)*4 +4) ~$fp ,i+1)
-           | Stack o -> (v @@ lw ~$t0 ((nb_args-i)*4 +4) ~$fp@@ sw ~$t0 o ~$fp ,i+1) )
+           | Reg r -> (v @@ (if i > 3 then lw r ((i-4)*4 +8) ~$fp
+                             else move r ("$a"^string_of_int(i))) ,i+1)
+           | Stack o -> (v @@ (if i > 3
+                               then lw ~$t0 ((i-4)*4 +8) ~$fp@@ sw ~$t0 o ~$fp
+                               else sw ("$a"^string_of_int(i)) o ~$fp ) ,i+1) )
         (nop,0) (List.rev p.formals)
     in
     args
@@ -316,8 +321,8 @@ let generate_fun p =
     if Symb_Tbl.mem "result" p.locals
     then
       match find_alloc "result" with
-      | Reg r -> move a0 r
-      | Stack o -> lw a0 o ~$fp
+      | Reg r -> move v0 r
+      | Stack o -> lw v0 o ~$fp
     else nop
   in
 

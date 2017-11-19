@@ -28,12 +28,14 @@ type token =
   | END
   | ELSE
   | EB
+  | EA
   | DIV
   | DEC
   | COMMA
   | BOOLEAN
   | BEGIN
   | BB
+  | BA
   | AND
   | ADD
 
