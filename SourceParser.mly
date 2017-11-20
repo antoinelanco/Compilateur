@@ -24,6 +24,7 @@
 %left EQ NEQ LT LE MT ME
 %left ADD SUB
 %left MULT DIV
+%left BB
 
 /*%start main
 %type <SourceAst.main> main*/
@@ -80,15 +81,14 @@ fun_decl:
       |None,None -> None
       in
 
-    let res  = Symb_Tbl.singleton "result" { typ=t; kind=Return } in
 
-    let local = Symb_Tbl.merge merge_vars res vds in
     let index = ref 0 in
     let ftl = List.fold_left (fun acc (t,i) ->
       incr index; Symb_Tbl.add i {typ=t; kind=Formal(!index)} acc )
       Symb_Tbl.empty ps in
 
-    let locals = Symb_Tbl.merge merge_vars local ftl in
+    let locals = Symb_Tbl.merge merge_vars vds ftl in
+    let locals = Symb_Tbl.add "result" { typ=t; kind=Return } locals in
     let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
 
     id, {
@@ -139,13 +139,14 @@ instructions:
 
 instruction:
 | c=call { [ProcCall(c)] }
-| PRINT; BEGIN; e=expression; END         { [Print(e)] }
+| PRINT; BEGIN; e=expression; END { [Print(e)] }
 | l=location; SET; e=expression { [Set(l,e)] }
 | id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
 | id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
 | WHILE; BEGIN; e=expression; END ;BEGIN; is=instructions; END { [While(e,is)] }
 | IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
 | IF; BEGIN; e=expression; END; BEGIN; is=instructions; END { [If(e,is,[])] }
+
 | FOR; BEGIN; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
     id2=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
   { let block = bl @ [Set(Identifier id2, e3)] in
@@ -157,11 +158,10 @@ instruction:
 
 expression:
 | c=call { FunCall(c) }
-| BB; e=expression; EB; t=typs { NewArray(e,t) }
+| BB; e=expression; EB; t=typs { NewArray(e,TypArray t) }
 | loc=location { Location(loc) }
 | i=literal { Literal(i) }
 | e1=expression; b=binop; e2=expression   { Binop(b,e1,e2) }
-;
 
 literal:
 | i=LITINT { Int i }
@@ -170,7 +170,7 @@ literal:
 
 location:
 | id=IDENT { Identifier(id) }
-| id=IDENT; BB; e=expression; EB { ArrayAccess(id,e) }
+| e1=expression; BB; e=expression; EB { ArrayAccess(e1,e) }
 
 
 call:

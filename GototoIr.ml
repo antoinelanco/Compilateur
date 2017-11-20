@@ -46,8 +46,11 @@ let flatten_func p =
       let ce, ve = flatten_expression e in
       (match l with
        | Identifier(s) -> ce @ [ T.Value(s,ve) ]
-       | ArrayAccess(l, e1) -> let ce1,ve1 = flatten_expression e1 in
-         ce @ ce1 @ [ T.Store( (Identifier l,ve1),ve ) ])
+       | ArrayAccess(e1, e2) ->
+         let ce1,ve1 = flatten_expression e1 in
+         let ce2,ve2 = flatten_expression e2 in
+         ce @ ce1 @ ce2 @ [ T.Store( (ve1,ve2),ve ) ])
+
     | S.CondGoto(e,l) ->
       let ce, ve = flatten_expression e in
       ce @ [ T.CondGoto(ve,l) ]
@@ -76,10 +79,11 @@ let flatten_func p =
     | Location(l) ->
       (match l with
        | Identifier(s) -> [], T.Identifier(s)
-       | ArrayAccess(loc,e) ->
-         let ce,ve = flatten_expression e in
+       | ArrayAccess(e1,e2) ->
+         let ce1,ve1 = flatten_expression e1 in
+         let ce2,ve2 = flatten_expression e2 in
          let i = new_tmp() in
-         ce @ [ T.Load(i,(Identifier loc,ve)) ], T.Identifier(i))
+         ce1 @ ce2 @ [ T.Load(i,(ve1,ve2)) ], T.Identifier(i))
 
     | NewArray(e,t) ->
       let ce,ve = flatten_expression e in

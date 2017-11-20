@@ -54,7 +54,7 @@ and literal =
   | Bool of bool (* Constante booléenne *)
 
 and location =
-  | ArrayAccess of string * expression
+  | ArrayAccess of expression * expression
   | Identifier  of string (* Variable en mémoire *)
 
 and binop =

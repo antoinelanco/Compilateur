@@ -304,7 +304,7 @@ let generate_fun p =
   in
 
   let load_args =
-    let nb_args = List.length p.formals in
+
     let args, index = List.fold_left
         (fun (v,i) arg -> match find_alloc arg with
            | Reg r -> (v @@ (if i > 3 then lw r ((i-4)*4 +8) ~$fp
