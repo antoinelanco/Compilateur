@@ -23,6 +23,7 @@ let typecheck_func p tab =
   let rec typecheck_block b = List.iter typecheck_instruction b
 
 
+
   (* typecheck_instruction: instruction -> unit *)
   and typecheck_instruction = function
     | ProcCall(c) -> let str, el = c in
@@ -72,8 +73,8 @@ let typecheck_func p tab =
 
   (* type_literal: literal -> typ *)
   and type_literal = function
-    | Int _  -> TypInteger
-    | Bool _ -> TypBoolean
+    | Int i  -> TypInteger
+    | Bool b -> TypBoolean
 
   (* type_location: location -> typ *)
   and type_location = function

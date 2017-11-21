@@ -182,7 +182,7 @@ arg:
 
 arguments:
 | e=expression { [e] }
-| e=expression; COMMA ; a=arguments { e :: a }
+| e=expression; COMMA ; a=arguments { a @ [e] }
 
 
 

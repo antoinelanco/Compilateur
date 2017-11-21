@@ -91,12 +91,12 @@ ocamlfind ocamlc -c -w -40 -o UntypedtoGoto.cmo UntypedtoGoto.ml # cached
 ocamlfind ocamlc -c -w -40 -o Main.cmo Main.ml # cached
 # Target: Mips.ml.depends, tags: { extension:ml, file:Mips.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules Mips.ml > Mips.ml.depends # cached
-# Target: Mips.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Mips.cmo, file:Mips.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -w -40 -o Mips.cmo Mips.ml # cached
 # Target: SourceParser.ml.depends, tags: { extension:ml, file:SourceParser.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules SourceParser.ml > SourceParser.ml.depends # cached
+# Target: Mips.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Mips.cmo, file:Mips.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o Mips.cmo Mips.ml
 # Target: SourceParser.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceParser.cmo, file:SourceParser.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -w -40 -o SourceParser.cmo SourceParser.ml # cached
+ocamlfind ocamlc -c -w -40 -o SourceParser.cmo SourceParser.ml
 # Target: Main.byte, tags: { byte, dont_link_with, extension:byte, file:Main.byte, link, ocaml, program, quiet, traverse }
 ocamlfind ocamlc -linkpkg SourceAst.cmo UntypedAst.cmo GotoAst.cmo IrAst.cmo AllocatedAst.cmo Mips.cmo AllocatedtoMips.cmo GototoIr.cmo IrLiveness.cmo IrDeadCodeElim.cmo Graph.cmo GraphColoring.cmo IrInterferenceGraph.cmo IrtoAllocated.cmo SourceInterpreter.cmo SourceParser.cmo SourceLexer.cmo SourceTypeChecker.cmo SourcetoUntyped.cmo UntypedtoGoto.cmo Main.cmo -o Main.byte
 # Compilation successful.

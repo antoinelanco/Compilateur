@@ -74,7 +74,7 @@ module VarSet = Set.Make(String)
      [mk_lv: IrAst.main ->
       ((IrAst.label, VarSet.t) Hashtbl.t) * ((IrAst.label, VarSet.t) Hashtbl.t)]
 *)
-let mk_lv p =
+let mk_lv p = Printf.printf "-------- IrLiveness --------\n";
 
   (* Création des deux tables destinées à accumuler le résultat, et
      calcul du flot de contrôle. *)
@@ -99,17 +99,25 @@ let mk_lv p =
   *)
 
   let get_ident_string = function
-    | Identifier (id) -> VarSet.singleton id
-    | Literal (_) -> VarSet.empty
+    | Identifier id -> VarSet.singleton id
+    | Literal _ -> VarSet.empty
   in
 
   let rec lv_gen : IrAst.instruction -> VarSet.t = function
-    | Print(v) | Value(_,v) | CondGoto(v,_) | New(_,v) -> get_ident_string v
-    | Binop(_,_,v1,v2) | Load(_,(v1,v2)) -> VarSet.union (get_ident_string v1) (get_ident_string v2)
-    | Store((v1,v2),v3) -> VarSet.union (get_ident_string v3)
-                             (VarSet.union (get_ident_string v1) (get_ident_string v2))
-    | ProcCall(_,v_l) | FunCall(_,_,v_l) -> List.fold_left (fun acc v ->
-        VarSet.union acc (get_ident_string(v) ) ) VarSet.empty v_l
+    | Binop(_,_,v1,v2) | Load(_,(v1,v2)) ->
+      VarSet.union (get_ident_string v1) (get_ident_string v2)
+
+    | Print(v) | Value(_,v) | CondGoto(v,_) | New(_,v) ->
+      get_ident_string v
+
+    | Store((v1,v2),v3) ->
+      VarSet.union (get_ident_string v3)
+        (VarSet.union (get_ident_string v1) (get_ident_string v2))
+
+    | ProcCall(_,v_l) | FunCall(_,_,v_l) ->
+      List.fold_left (fun acc v ->
+          VarSet.union acc (get_ident_string v)) VarSet.empty v_l
+
     | _ -> VarSet.empty
 
   and lv_kill : IrAst.instruction -> VarSet.t = function
@@ -130,7 +138,7 @@ let mk_lv p =
      tables [lv_in] et [lv_out], en appliquant les équations de flot de données.
      Rappel :
         In[lab]  =  (Out[lab] \ Kill[instr]) ∪ Gen[instr]
-       Out[lab]  =  ⋃ᵣ In[r]                                r ∈ Succ[lab]
+       Out[lab]  =  ⋃ᵣ In[r] r ∈ Succ[lab]
 
      Cette fonction doit aussi faire passer le booléen [change] à [true] si
      les valeurs In[lab] et Out[lab] ont été modifiées.
@@ -138,25 +146,32 @@ let mk_lv p =
 
   let lv_out_to_lv_in lab instr =
     let tmp_kill = lv_kill instr in
-    let tmp_in = VarSet.fold (fun i acc -> VarSet.remove i acc) tmp_kill (Hashtbl.find lv_out lab) in
+    let tmp_in = VarSet.fold
+        (fun i acc -> VarSet.remove i acc)
+        tmp_kill (Hashtbl.find lv_out lab) in
     let res_in = VarSet.union tmp_in (lv_gen instr) in
 
-    if res_in <> (Hashtbl.find lv_in lab) then change:= true;
+    if res_in <> (Hashtbl.find lv_in lab)
+    then change:= true;
     Hashtbl.replace lv_in lab res_in
   in
 
   let lv_in_to_lv_out lab succs =
-    let tmp_out = List.fold_left (fun acc s -> VarSet.union acc (Hashtbl.find lv_in s)) VarSet.empty succs in
-    if tmp_out <> (Hashtbl.find lv_out lab) then change:= true;
+    let tmp_out = List.fold_left
+        (fun acc s -> VarSet.union acc (Hashtbl.find lv_in s))
+        VarSet.empty succs
+    in
+    if tmp_out <> (Hashtbl.find lv_out lab)
+    then change:= true;
     Hashtbl.replace lv_out lab tmp_out
   in
 
   let lv_step_instruction (lab, instr) =
-    (*Printf.printf "Boucle IrLivness %s\n" lab;*)
+    (*Printf.printf "Boucle IrLiveness %s\n" lab;*)
     (* Récupération de la liste des successeurs *)
     let succs = Hashtbl.find_all succ lab in
-    lv_out_to_lv_in lab instr;
-    lv_in_to_lv_out lab succs;
+    lv_in_to_lv_out lab succs; (* Out[lab]  =  ⋃ᵣ In[r] r ∈ Succ[lab] *)
+    lv_out_to_lv_in lab instr; (* In[lab]  =  (Out[lab] \ Kill[instr]) ∪ Gen[instr] *)
 
   in
 

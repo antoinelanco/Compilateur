@@ -761,7 +761,7 @@ and _menhir_goto_arguments : _menhir_env -> 'ttv_tail -> _menhir_state -> (Sourc
         let _menhir_stack = Obj.magic _menhir_stack in
         let a = _v in
         let (_menhir_stack, _menhir_s, e) = _menhir_stack in
-        let _v : (SourceAst.expression list) =                                     ( e :: a ) in
+        let _v : (SourceAst.expression list) =                                     ( a @ [e] ) in
         _menhir_goto_arguments _menhir_env _menhir_stack _menhir_s _v
     | MenhirState27 ->
         let _menhir_stack = Obj.magic _menhir_stack in

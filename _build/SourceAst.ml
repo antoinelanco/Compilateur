@@ -111,7 +111,7 @@ let rec print_block o = function
   | [] -> ""
   | i::b -> (offset o) ^ (print_instruction o i) ^ ";\n" ^ (print_block o b)
 and print_instruction o = function
-  | ProcCall c -> "ProcCall" (*A completer*)
+  | ProcCall(s,el) -> sprintf "%s(args)" s (*A completer*)
   | Set(id, e) -> sprintf "%s := %s" (print_location id) (print_expression e)
   | While(e, b) ->
     sprintf "while %s (\n%s%s)"
