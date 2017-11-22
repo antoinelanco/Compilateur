@@ -20,6 +20,7 @@
 %token EOF
 %token BB EB BA EA
 
+
 %left AND OR
 %left EQ NEQ LT LE MT ME
 %left ADD SUB
@@ -124,12 +125,10 @@ fun_decl:
     }
 
 para:
-| (* empty *) { [] }
-| p=parameters { p }
+| ps=separated_list(COMMA,parameters) { ps }
 
 parameters:
-| t=typs; id=IDENT { [(t,id)] }
-| t=typs; id=IDENT; COMMA; p=parameters { (t,id) :: p }
+| t=typs; id=IDENT { (t,id) }
 
 
 
@@ -140,21 +139,29 @@ instructions:
 instruction:
 | c=call { [ProcCall(c)] }
 | PRINT; BEGIN; e=expression; END { [Print(e)] }
+| s=set_direct { s }
 | l=location; SET; e=expression { [Set(l,e)] }
-| id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
-| id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
-| WHILE; BEGIN; e=expression; END ;BEGIN; is=instructions; END { [While(e,is)] }
+| WHILE; BEGIN; e=expression; END; BEGIN; is=instructions; END { [While(e,is)] }
 | IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
 | IF; BEGIN; e=expression; END; BEGIN; is=instructions; END { [If(e,is,[])] }
 
-| FOR; BEGIN; id1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
-    id2=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
-  { let block = bl @ [Set(Identifier id2, e3)] in
-     [Set(Identifier id1, e1);While(e2, block)] }
+| FOR; BEGIN; l1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
+  l3=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
+  { let block = bl @ [Set(Identifier(l3),e3)] in [Set(Identifier(l1),e1);While(e2, block)] }
+
+| FOR; BEGIN; l1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
+  s=set_direct; END; BEGIN; bl=instructions; END
+  { let block = bl @ s in [Set(Identifier(l1),e1);While(e2, block)] }
 
 | FOR; BEGIN; id=IDENT; SET; i1=literal; TO; i2=literal; END; BEGIN; bl=instructions; END;
   { let block = bl @ [Set(Identifier id, Binop(Add,Location( Identifier id ),Literal(Int 1)))] in
      [Set(Identifier id, Literal i1);While(Binop(Le,Location(Identifier id),Literal i2), block)] }
+
+
+set_direct:
+| id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
+| id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
+
 
 expression:
 | c=call { FunCall(c) }
@@ -163,10 +170,6 @@ expression:
 | loc=location { Location(loc) }
 | i=literal { Literal(i) }
 | e1=expression; b=binop; e2=expression   { Binop(b,e1,e2) }
-
-
-
-
 
 literal:
 | i=LITINT { Int i }
@@ -179,15 +182,8 @@ location:
 
 
 call:
-| id=IDENT; BEGIN; a=arg; END { id, a }
+| id=IDENT; BEGIN; a=separated_list(COMMA, expression); END { id, a }
 
-arg:
-| (* empty *) { [] }
-| a=arguments { a }
-
-arguments:
-| e=expression { [e] }
-| e=expression; COMMA ; a=arguments { a @ [e] }
 
 %inline binop:
 

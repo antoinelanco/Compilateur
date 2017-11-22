@@ -1,0 +1,37 @@
+main(integer x) (
+  var [][]integer tab;
+  var []integer tab2;
+
+  tab := make_tab(20);
+
+  print_tab(tab);
+
+)
+
+[][]integer make_tab(integer x) (
+  var [][]integer tab;
+  var integer j;
+  var integer i;
+
+  tab := [x][]integer;
+
+  for (j := 0; j < 10; j++) (
+    tab[j] := [x]integer;
+    for (i := 0; i < 10; i++) (
+      tab[j][i] := j + i + 49;
+    );
+  );
+
+  result := tab;
+)
+
+print_tab([][]integer tab) (
+  var integer j;
+  var integer i;
+  for(j:=0;j<10;j++) (
+    for (i := 0; i < 10; i++) (
+      print(tab[j][i]);
+    );
+    print(10);
+  );
+)

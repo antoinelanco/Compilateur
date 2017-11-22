@@ -1,0 +1,6 @@
+main(integer x)(
+  var integer i;
+  for(i:=65;i<x+65;i++)(
+    print(i);
+  );
+)

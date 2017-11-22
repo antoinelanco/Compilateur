@@ -36,17 +36,38 @@
       - 1.2.1 Syntaxes abstraites
       - 1.2.2 Convertions d'appel
   - 3 Extensions
-    - ...
+    - 3.3 Conventions d'appel, suite
+      - 3.3.1 Sauvegarder les registres (RECOMMANDÉ)
+      - 3.3.2 Paramètres et résultat
 
   #### TP6)
   - 1 Description
+    - 1.1 Extension du langage source
+      - 1.1.1 Lexique
+      - 1.1.2 Grammaire
+      - 1.1.3 Sémantique
+      - 1.1.4 Sémantique : précision supplémentaire
+    - 1.2 Extension du compilateur
+      - 1.2.1 Syntaxes abstraites
+      - 1.2.2 Représentation
+      - 1.2.3 Gestion du tas
+  - 3 Extensions
+    - 3.2 Sucre syntaxique : boucles inconditionnelles
+    - 3.3 Tableaux initialisés
 
+  #### TP7)
+  - Pas fais
 
- ## Fait pas encore fonctionnel :
+  #### TP8)
+  - Travail attendu
 
-rien
 
  ## Info sup :
+
+ https://github.com/antoinelanco/Compilateur
+ https://www.lri.fr/~blsk/Compilation/
+
+ Dans certain cas en mode full stack on a une erreur stack overflow mais avec le parametre -O ca marche toujours
 
   - Incrementation (++)
   - Decrementation (--)

@@ -1,0 +1,6 @@
+main(integer x) (
+  var []integer tab;
+  tab := [1+true]integer;
+  tab[1] := 65;
+  print(tab[1]);
+)

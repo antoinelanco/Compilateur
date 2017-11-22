@@ -1,0 +1,21 @@
+main(integer x) (
+  var [][]integer tab;
+  var [][]integer tab2;
+
+  tab := [10][]integer;
+  tab[2] := [10]integer;
+  tab[2][3] := 65;
+  print(tab[2][3]);
+  tab2 := make(tab[2][3]);
+  print(tab2[1][2]);
+)
+
+[][]integer make(integer x) (
+  var [][]integer tab2;
+
+  tab2 := [x][]integer;
+  tab2[1] := [10]integer;
+  tab2[1][2] := 66;
+  result := tab2;
+
+)
