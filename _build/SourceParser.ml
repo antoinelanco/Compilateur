@@ -559,7 +559,7 @@ and _menhir_goto_loption_separated_nonempty_list_SEMI_expression__ : _menhir_env
           let xs = xs0 in
               ( xs )
         in
-                                                      ( NewArray(Literal(Int(List.length es)),TypInteger) ) in
+                                                      ( NewArrayAcol(es) ) in
         _menhir_goto_expression _menhir_env _menhir_stack _menhir_s _v
     | _ ->
         assert (Pervasives.(<>) _menhir_env._menhir_shifted (-1));

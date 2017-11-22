@@ -76,7 +76,7 @@ let generate_fun p =
            acc
            @@ inst1
            @@ (if i > 3 then ( stack_args := (!stack_args+4);
-                              sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
+                               sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
                else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v
@@ -134,7 +134,7 @@ let generate_fun p =
            acc
            @@ inst1
            @@ (if i > 3 then (stack_args := (!stack_args+4);
-                sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
+                              sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
                else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v

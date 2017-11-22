@@ -48,6 +48,7 @@ and expression =
   | Location  of location                        (* Valeur en mémoire  *)
   | Binop     of binop * expression * expression (* Opération binaire  *)
   | NewArray  of expression * typ
+  | NewArrayAcol of expression list
 
 and literal =
   | Int  of int  (* Constante entière   *)
@@ -100,6 +101,8 @@ let print_binop = function
   | And  -> "&&"
   | Or   -> "||"
 let rec print_expression = function
+  | NewArrayAcol(es) -> let var_tab = List.fold_left (fun acc i -> (print_expression i)^"; "^acc) "" es in
+    sprintf "Creation d'un tableau : {"^var_tab^"}"
   | NewArray(e, t) -> sprintf "Creation d'un tableau de %s de taille %s" (print_typ t) (print_expression e)
   | FunCall c -> "FunCall" (*A completer*)
   | Literal lit -> print_literal lit

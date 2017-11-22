@@ -72,8 +72,8 @@ let flatten_func p =
     function
     | FunCall(c) -> let str,args = c in
       let i = new_tmp() in
-      let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
-          let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
+      let es, vs = List.fold_left (fun (es_acc, vs_acc) arg ->
+          let c,v = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in
       es@[ T.FunCall(i,str,vs) ], T.Identifier(i)
 
     | Location(l) ->
@@ -88,7 +88,14 @@ let flatten_func p =
     | NewArray(e,t) ->
       let ce,ve = flatten_expression e in
       let i = new_tmp() in
-      ce @ [ T.New(i,ve) ], T.Identifier (i)
+      ce @ [ T.New(i,ve) ], T.Identifier(i)
+    | NewArrayAcol(es) ->
+      let i = new_tmp() in
+      let arraycomplet, _ =
+        List.fold_left (fun (acc,nb) e -> let ce,ve = flatten_expression e in
+                         (acc @ ce @ [ T.Store((T.Identifier i,T.Literal(Int(nb))),ve) ]),nb+1) ([],0) es
+      in
+      [ T.New(i,Literal(Int(List.length es))) ] @ arraycomplet, T.Identifier(i)
     | Literal(l) -> [], T.Literal(l)
     | Binop(b,e1,e2) -> let i = new_tmp() in
       let ce1, ve1 = flatten_expression e1 in

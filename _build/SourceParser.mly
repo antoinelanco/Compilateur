@@ -158,11 +158,15 @@ instruction:
 
 expression:
 | c=call { FunCall(c) }
-| BA; es=separated_list(SEMI, expression); EA { NewArray(Literal(Int(List.length es)),TypInteger) }
+| BA; es=separated_list(SEMI, expression); EA { NewArrayAcol(es) }
 | BB; e=expression; EB; t=typs { NewArray(e,TypArray t) }
 | loc=location { Location(loc) }
 | i=literal { Literal(i) }
 | e1=expression; b=binop; e2=expression   { Binop(b,e1,e2) }
+
+
+
+
 
 literal:
 | i=LITINT { Int i }
@@ -184,8 +188,6 @@ arg:
 arguments:
 | e=expression { [e] }
 | e=expression; COMMA ; a=arguments { a @ [e] }
-
-
 
 %inline binop:
 

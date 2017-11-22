@@ -50,7 +50,16 @@ let typecheck_func p tab =
   (* type_expression: expression -> typ *)
   and type_expression = function
 
-    | NewArray(e,t) -> t
+    | NewArray(e,t) -> comparetype TypInteger (type_expression e); t
+
+    | NewArrayAcol(el) -> (match el with
+        | e::_ -> (match type_expression e with
+            | TypInteger -> List.iter(fun i ->
+                comparetype TypInteger (type_expression i))el; TypArray TypInteger
+            | TypBoolean -> List.iter(fun i ->
+                comparetype TypBoolean (type_expression i))el; TypArray TypBoolean
+            | _ -> failwith "integer ou bool dans {} ")
+        | [] -> failwith "{} vide ")
 
     | Literal(lit)  -> type_literal lit
 
