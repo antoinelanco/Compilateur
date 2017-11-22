@@ -35,19 +35,27 @@ let allocate_main reg_flag prog =
           match info with
           | Return -> (current_offset_stack := (!current_offset_stack - 4); T.Stack (!current_offset_stack))
           | _ -> if i > 7
-            then (Printf.printf "var: %s <- " id ; current_offset_stack := (!current_offset_stack - 4);Printf.printf "Stack(%d) \n" !current_offset_stack ; T.Stack (!current_offset_stack))
-            else (Printf.printf "var: %s <- Reg(%s)\n" id ("$t" ^ string_of_int(i+2)) ; T.Reg ("$t" ^ string_of_int(i+2)))
+            then (Printf.printf "var: %s <- " id ;
+                  current_offset_stack := (!current_offset_stack - 4);
+                  Printf.printf "Stack(%d) \n" !current_offset_stack ;
+                  T.Stack (!current_offset_stack))
+
+            else (Printf.printf "var: %s <- Reg(%s)\n" id ("$t" ^ string_of_int(i+2)) ;
+                  T.Reg ("$t" ^ string_of_int(i+2)))
         ) p.S.locals
 
     else
       (* Tout sur la pile *)
       S.Symb_Tbl.mapi (fun id (info: S.identifier_info) ->
           match info with
-          | _ -> Printf.printf "var: %s <- " id ;current_offset_stack := (!current_offset_stack - 4);Printf.printf "Stack(%d) \n" !current_offset_stack ; T.Stack (!current_offset_stack)
+          | _ -> Printf.printf "var: %s <- " id ;
+            current_offset_stack := (!current_offset_stack - 4);
+            Printf.printf "Stack(%d) \n" !current_offset_stack ;
+            T.Stack (!current_offset_stack)
         ) p.S.locals
   in
 
-  S.Symb_Tbl.fold (fun i info acc -> Printf.printf "Boucle IrtoAllocated %s \n" i;
+  S.Symb_Tbl.fold (fun i info acc -> Printf.printf "Function : %s\n" i;
                     T.Symb_Tbl.add i
                       {T.formals = info.S.formals;
                        T.locals = tbl info;

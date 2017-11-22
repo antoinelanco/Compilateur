@@ -158,6 +158,7 @@ instruction:
 
 expression:
 | c=call { FunCall(c) }
+| BA; es=separated_list(SEMI, expression); EA { NewArray(Literal(Int(List.length es)),TypInteger) }
 | BB; e=expression; EB; t=typs { NewArray(e,TypArray t) }
 | loc=location { Location(loc) }
 | i=literal { Literal(i) }

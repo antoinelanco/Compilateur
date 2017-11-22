@@ -68,18 +68,19 @@ let generate_fun p =
   and generate_instr : AllocatedAst.instruction -> 'a Mips.asm = function
     | FunCall(i,s,v) ->
 
+      let stack_args = ref 0 in
+
       let save_args, nb = List.fold_left (fun (acc,i) e ->
           (let reg1, inst1 = load_value_bis ~$t0 e in
 
            acc
            @@ inst1
-           @@ (if i > 3 then sw reg1 ( -(i-4) * 4 - 4 ) ~$sp
+           @@ (if i > 3 then ( stack_args := (!stack_args+4);
+                              sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
                else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v
       in
-
-      let stack_args = (nb-4)*4 in
 
       let max_reg = Symb_Tbl.fold
           (fun id alloc_info acc ->
@@ -116,27 +117,29 @@ let generate_fun p =
       (*Etape 1*)
       save_reg max_reg
       @@ save_args
-      @@ addi sp sp (-stack_args)
+      @@ addi sp sp (-(!stack_args))
       @@ jal s
       (*Etape 4*)
-      @@ addi sp sp stack_args
+      @@ addi sp sp !stack_args
       @@ load_reg max_reg
       @@ load_res
 
     | ProcCall(s,v) ->
+
+      let stack_args = ref 0 in
 
       let save_args, nb = List.fold_left (fun (acc,i) e ->
           (let reg1, inst1 = load_value_bis ~$t0 e in
 
            acc
            @@ inst1
-           @@ (if i > 3 then sw reg1 ( -(i-4) * 4 - 4 ) ~$sp
+           @@ (if i > 3 then (stack_args := (!stack_args+4);
+                sw reg1 ( -(i-4) * 4 - 4 ) ~$sp)
                else move ("$a"^string_of_int(i)) reg1 ),i+1 ) )
 
           (nop,0) v
       in
 
-      let stack_args = nb*4 in
 
       let max_reg = Symb_Tbl.fold
           (fun id alloc_info acc ->
@@ -167,10 +170,10 @@ let generate_fun p =
       (*Etape 1*)
       save_reg max_reg
       @@ save_args
-      @@ addi sp sp (-stack_args)
+      @@ addi sp sp (-(!stack_args))
       @@ jal s
       (*Etape 4*)
-      @@ addi sp sp stack_args
+      @@ addi sp sp !stack_args
       @@ load_reg max_reg
 
     | Load (id,(v1,v2)) ->
@@ -312,7 +315,7 @@ let generate_fun p =
            | Stack o -> (v @@ (if i > 3
                                then lw ~$t0 ((i-4)*4 +8) ~$fp@@ sw ~$t0 o ~$fp
                                else sw ("$a"^string_of_int(i)) o ~$fp ) ,i+1) )
-        (nop,0) (List.rev p.formals)
+        (nop,0) p.formals
     in
     args
   in
@@ -350,8 +353,8 @@ let init =
   move fp sp
   @@ lw a0 0 a1
   @@ jal "atoi"
-  (*@@ move a0 v0*)
-  @@ sw v0 0 sp
+  @@ move a0 v0
+  (*@@ sw v0 0 sp*)
   @@ jal "main"
 
 let close = li v0 10 @@ syscall
