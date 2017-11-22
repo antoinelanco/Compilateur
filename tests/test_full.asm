@@ -18,9 +18,9 @@ main:
 	addi $sp, $sp, -4
 	li $t0, 20
 	move $a0, $t0
-	addi $sp, $sp, -4
+	addi $sp, $sp, 0
 	jal make_tab
-	addi $sp, $sp, 4
+	addi $sp, $sp, 0
 	addi $sp, $sp, 4
 	lw $t2, -4($sp)
 	move $t2, $v0
@@ -29,9 +29,9 @@ main:
 	sw $t2, -4($sp)
 	addi $sp, $sp, -4
 	move $a0, $t2
-	addi $sp, $sp, -4
+	addi $sp, $sp, 0
 	jal print_tab
-	addi $sp, $sp, 4
+	addi $sp, $sp, 0
 	addi $sp, $sp, 4
 	lw $t2, -4($sp)
 	lw $ra, 0($fp)

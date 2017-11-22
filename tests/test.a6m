@@ -1,11 +1,14 @@
-main(integer x) (
-  print(rec_mul(x, x, 9));
-)
-
-integer rec_mul(integer i, integer a, integer cpt) (
-  if (cpt > 0) (
-    result := rec_mul(i + a, a, cpt - 1);
-  ) else (
-    result := i;
+main(integer x)(
+  var integer i;
+  i := 0;
+  var []integer tab;
+  tab := [4]integer;
+  tab[0] := 80;
+  tab[1] := 85;
+  tab[2] := 84;
+  tab[3] := 69;
+  while(i<3)(
+   print(i);
+   i := i+1;
   );
-)
+ )

@@ -124,11 +124,14 @@ fun_decl:
       }
     }
 
-para:
-| ps=separated_list(COMMA,parameters) { ps }
 
-parameters:
-| t=typs; id=IDENT { (t,id) }
+    para:
+    | (* empty *) { [] }
+    | p=parameters { p }
+
+    parameters:
+    | t=typs; id=IDENT { [(t,id)] }
+    | t=typs; id=IDENT; COMMA; p=parameters { (t,id) :: p }
 
 
 
@@ -181,8 +184,19 @@ location:
 | e1=expression; BB; e=expression; EB { ArrayAccess(e1,e) }
 
 
+
 call:
-| id=IDENT; BEGIN; a=separated_list(COMMA, expression); END { id, a }
+| id=IDENT; BEGIN; a=arg; END { id, a }
+
+
+arg:
+| (* empty *) { [] }
+| a=arguments { a }
+
+arguments:
+| e=expression { [e] }
+| e=expression; COMMA ; a=arguments { a @ [e] }
+
 
 
 %inline binop:
