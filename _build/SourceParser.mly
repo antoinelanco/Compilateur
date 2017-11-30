@@ -148,30 +148,42 @@ instructions:
 | i=instruction; SEMI; is=instructions    { i @ is }
 
 instruction:
-| c=call { [ProcCall(c)] }
-| PRINT; BEGIN; e=expression; END { [Print(e)] }
-| s=set_direct { s }
-| l=location; SET; e=expression { [Set(l,e)] }
-| WHILE; BEGIN; e=expression; END; BEGIN; is=instructions; END { [While(e,is)] }
-| IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END; { [If(e,is1,is2)] }
-| IF; BEGIN; e=expression; END; BEGIN; is=instructions; END { [If(e,is,[])] }
+| c=call
+  { [($startpos,ProcCall(c))] }
+| PRINT; BEGIN; e=expression; END
+  { [($startpos,Print(e))] }
+| s=set_direct
+  { s }
+| l=location; SET; e=expression
+  { [($startpos,Set(l,e))] }
+| WHILE; BEGIN; e=expression; END; BEGIN; is=instructions; END
+  { [($startpos,While(e,is))] }
+| IF; BEGIN; e=expression; END; BEGIN; is1=instructions; END; ELSE; BEGIN; is2=instructions; END;
+  { [($startpos,If(e,is1,is2))] }
+| IF; BEGIN; e=expression; END; BEGIN; is=instructions; END
+  { [($startpos,If(e,is,[]))] }
 
 | FOR; BEGIN; l1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
   l3=IDENT; SET; e3=expression; END; BEGIN; bl=instructions; END
-  { let block = bl @ [Set(Identifier(l3),e3)] in [Set(Identifier(l1),e1);While(e2, block)] }
+  { let block = bl @ [($startpos,Set(Identifier(l3),e3))] in
+     [($startpos,Set(Identifier(l1),e1));($startpos,While(e2, block))] }
 
 | FOR; BEGIN; l1=IDENT; SET; e1=expression; SEMI; e2=expression; SEMI;
   s=set_direct; END; BEGIN; bl=instructions; END
-  { let block = bl @ s in [Set(Identifier(l1),e1);While(e2, block)] }
+  { let block = bl @ s in
+    [($startpos,Set(Identifier(l1),e1));($startpos,While(e2, block))] }
 
 | FOR; BEGIN; id=IDENT; SET; i1=literal; TO; i2=literal; END; BEGIN; bl=instructions; END;
-  { let block = bl @ [Set(Identifier id, Binop(Add,Location( Identifier id ),Literal(Int 1)))] in
-     [Set(Identifier id, Literal i1);While(Binop(Le,Location(Identifier id),Literal i2), block)] }
+  { let block = bl @ [($startpos,Set(Identifier id, Binop(Add,Location( Identifier id ),Literal(Int 1))))] in
+     [($startpos,Set(Identifier id, Literal i1));
+     ($startpos,While(Binop(Le,Location(Identifier id),Literal i2), block))] }
 
 
 set_direct:
-| id=IDENT; INC { [Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) )] }
-| id=IDENT; DEC { [Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1)) )] }
+| id=IDENT; INC
+  { [($startpos,Set(Identifier id,Binop(Add,Location( Identifier id ),Literal(Int 1)) ))] }
+| id=IDENT; DEC
+  { [($startpos,Set(Identifier id,Binop(Sub,Location( Identifier id ),Literal(Int 1))) )] }
 
 
 expression:

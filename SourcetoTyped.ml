@@ -2,25 +2,27 @@ module S = SourceAst
 module T = TypedAst
 open Printf
 
-exception Type_error of S.typ * S.typ * string * string
+exception Type_error of string * string * string
 
-let comparetype t1 t2 =
+let comparetype (pos:Lexing.position) t1 t2 =
   if t1 <> t2
-  then raise (Type_error(t1, t2, (S.print_typ t1), (S.print_typ t2)))
+  then raise (Type_error("line : "^string_of_int(pos.pos_lnum),
+                         (S.print_typ t1), (S.print_typ t2)))
 
 let typecheck_func p tab =
 
   let symb_tbl = p.S.locals in
 
   let rec typecheck_block b = List.fold_left
-      (fun acc i -> acc @ (typecheck_instruction i) ) [] b
+      (fun acc (position, i) -> acc @ (typecheck_instruction position i) )
+      [] b
 
 
-  and typecheck_instruction = function
+  and typecheck_instruction pos = function
     | S.ProcCall(c) -> let str, el = c in
 
       let cc = List.fold_left (fun acc e ->
-          acc @ [type_expression e] ) [] el in
+          acc @ [type_expression pos e] ) [] el in
 
       let new_str = List.fold_left(
           fun acc e -> sprintf "%s_%s" acc (SourceAst.print_typ e.T.annot))
@@ -32,69 +34,69 @@ let typecheck_func p tab =
       [T.ProcCall({annot = None; elt = (new_str,cc) })]
 
     | S.Set(l, e) ->
-      let ll = type_location l in
-      let ee = type_expression e in
-      comparetype ll.T.annot ee.T.annot;
+      let ll = type_location pos l in
+      let ee = type_expression pos e in
+      comparetype pos ll.T.annot ee.T.annot;
       [Set(ll,ee)]
 
     | S.While(e, b) ->
-      let ee = type_expression e in
+      let ee = type_expression pos e in
       let bl = typecheck_block b in
-      comparetype TypBoolean ee.T.annot;
+      comparetype pos TypBoolean ee.T.annot;
       [T.While(ee, bl)]
 
     | S.If(e, b1, b2) ->
-      let ee = type_expression e in
+      let ee = type_expression pos e in
       let bb1 = typecheck_block b1 in
       let bb2 = typecheck_block b2 in
-      comparetype TypBoolean ee.T.annot;
+      comparetype pos TypBoolean ee.T.annot;
       [If(ee, bb1, bb2)]
 
     | S.Print(e) ->
-      let ee = type_expression e in
-      comparetype TypInteger ee.T.annot;
+      let ee = type_expression pos e in
+      comparetype pos TypInteger ee.T.annot;
       [Print(ee)]
 
 
-  and type_expression = function
-    | S.NewArray(e,t) -> let ee = type_expression e in
-      comparetype TypInteger ee.T.annot;
+  and type_expression pos = function
+    | S.NewArray(e,t) -> let ee = type_expression pos e in
+      comparetype pos TypInteger ee.T.annot;
       {annot = t ;elt = T.NewArray(ee,t)}
 
     | S.NewArrayAcol(el) -> (match el with
-        | e::_ -> let ee = type_expression e in
+        | e::_ -> let ee = type_expression pos e in
           (match ee.annot with
            | S.TypInteger -> let explist = List.fold_left(
                fun acc i ->
-                 let ii = type_expression i in
-                 comparetype S.TypInteger ii.annot; acc @ [ii] ) [] el in
+                 let ii = type_expression pos i in
+                 comparetype pos S.TypInteger ii.annot; acc @ [ii] ) [] el in
              {annot=TypArray TypInteger; elt=T.NewArrayAcol(explist)}
            | S.TypBoolean -> let explist = List.fold_left(
                fun acc i ->
-                 let ii = type_expression i in
-                 comparetype S.TypBoolean ii.annot; acc @ [ii] ) [] el in
+                 let ii = type_expression pos i in
+                 comparetype pos S.TypBoolean ii.annot; acc @ [ii] ) [] el in
              {annot=TypArray TypBoolean; elt=T.NewArrayAcol(explist)}
            | _ -> failwith "integer ou bool dans {} ")
         | [] -> failwith "{} vide ")
 
     | S.Literal(lit)  -> {annot=(type_literal lit); elt=T.Literal(lit)}
 
-    | S.Location(loc) -> let ll = type_location loc in
+    | S.Location(loc) -> let ll = type_location pos loc in
       {annot=ll.T.annot; elt=T.Location(ll)}
 
     | S.Binop(op, e1, e2) ->
       let ty_op, ty_r = type_binop op in
-      let ee1 = type_expression e1 in
-      let ee2 = type_expression e2 in
-      comparetype ty_op ee1.T.annot;
-      comparetype ty_op ee2.T.annot;
+      let ee1 = type_expression pos e1 in
+      let ee2 = type_expression pos e2 in
+      comparetype pos ty_op ee1.T.annot;
+      comparetype pos ty_op ee2.T.annot;
       {annot = ty_r; elt = T.Binop(op,ee1,ee2)}
 
 
     | S.FunCall(c) -> let str, el = c in
 
       let cc = List.fold_left (fun acc e ->
-          acc @ [type_expression e] ) [] el in
+          acc @ [type_expression pos e] ) [] el in
 
       let new_str = List.fold_left(
           fun acc e -> sprintf "%s_%s" acc (SourceAst.print_typ e.T.annot))
@@ -111,13 +113,13 @@ let typecheck_func p tab =
     | Int i  -> TypInteger
     | Bool b -> TypBoolean
 
-  and type_location = function
+  and type_location pos = function
     | S.Identifier id -> {annot=(S.Symb_Tbl.find id symb_tbl).typ; elt=T.Identifier(id)}
 
     | S.ArrayAccess(e1,e2) ->
-      let ee1 = type_expression e1 in
-      let ee2 = type_expression e2 in
-      comparetype TypInteger ee2.T.annot;
+      let ee1 = type_expression pos e1 in
+      let ee2 = type_expression pos e2 in
+      comparetype pos TypInteger ee2.T.annot;
       (match ee1.T.elt with
        | T.Location i ->
          (match i.T.annot with

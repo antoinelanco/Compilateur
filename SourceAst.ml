@@ -34,7 +34,7 @@ and typ =
   | TypArray of typ
 
 (* Un bloc de code est une liste d'instructions *)
-and block = instruction list
+and block = (Lexing.position * instruction) list
 and instruction =
   | ProcCall  of call
   | Set       of location   * expression    (* Affectation *)
@@ -113,8 +113,8 @@ let rec print_expression = function
 let offset o = String.make (2*o) ' '
 let rec print_block o = function
   | [] -> ""
-  | i::b -> (offset o) ^ (print_instruction o i) ^ ";\n" ^ (print_block o b)
-and print_instruction o = function
+  | (pos,i)::b -> (offset o) ^ (print_instruction pos o i) ^ ";\n" ^ (print_block o b)
+and print_instruction pos o = function
   | ProcCall(s,el) -> sprintf "%s(args)" s (*A completer*)
   | Set(id, e) -> sprintf "%s := %s" (print_location id) (print_expression e)
   | While(e, b) ->

@@ -10,7 +10,7 @@ let rec eval_main p x =
 (* [eval_block: state -> block -> state] *)
 and eval_block env = function
   | []   -> env
-  | i::b -> let env1 = eval_instruction env i in
+  | (pos,i)::b -> let env1 = eval_instruction env i in
     eval_block env1 b
 
 (* [eval_instruction: state -> instruction -> state] *)
