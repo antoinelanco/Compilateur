@@ -35,6 +35,7 @@
 
 %%
 
+
 /*main:
 | MAIN; BEGIN; INT; x=IDENT; END;
   BEGIN; vds=var_decls; is=instructions; END; EOF  {
@@ -91,8 +92,12 @@ fun_decl:
     let locals = Symb_Tbl.merge merge_vars vds ftl in
     let locals = Symb_Tbl.add "result" { typ=t; kind=Return } locals in
     let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
+    let new_id =
+      List.fold_left (fun acc (t,_) -> acc^"_"^(SourceAst.print_typ t))
+        id ps
+    in
 
-    id, {
+    new_id, {
       return=Some t;
       formals=formals;
       locals=locals;
@@ -114,9 +119,12 @@ fun_decl:
         incr index; Symb_Tbl.add i {typ=t; kind=Formal(!index)} acc )
         Symb_Tbl.empty ps in
       let locals = Symb_Tbl.merge merge_vars vds ftl in
-
       let formals = List.fold_left (fun acc (t,id) -> (t,id)::acc) [] ps in
-      id, {
+      let new_id =
+        List.fold_left (fun acc (t,_) -> acc^"_"^(SourceAst.print_typ t))
+          id ps
+      in
+      new_id, {
         return=None;
         formals=formals;
         locals=locals;

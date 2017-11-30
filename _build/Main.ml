@@ -40,13 +40,15 @@ let () =
      else SourceParser.main SourceLexer.token lb *)
   in
   close_in c;
-  Printf.printf "-------- SourceTypeChecker --------\n";
-  SourceTypeChecker.typecheck_prog p;
+  (*  Printf.printf "-------- SourceTypeChecker --------\n";
+      SourceTypeChecker.typecheck_prog p;*)
   if !interpret
   then let _ = SourceInterpreter.eval_main p !input in ()
   else begin
-    Printf.printf "-------- SourcetoUntyped --------\n";
-    let p = SourcetoUntyped.erase_prog p in
+    let p = SourcetoTyped.typer p in
+    let p = TypedtoUntyped.untyper p in
+    (*    Printf.printf "-------- SourcetoUntyped --------\n";
+          let p = SourcetoUntyped.erase_prog p in*)
     Printf.printf "-------- UntypedtoGoto --------\n";
     let p = UntypedtoGoto.destructure_prog p in
     Printf.printf "-------- GototoIr --------\n";

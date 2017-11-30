@@ -1,14 +1,14 @@
 main(integer x)(
   var integer i;
-  i := 0;
   var []integer tab;
+  i := 0;
   tab := [4]integer;
   tab[0] := 80;
   tab[1] := 85;
   tab[2] := 84;
   tab[3] := 69;
-  while(i<3)(
-   print(i);
+  while(i<4)(
+   print(tab[i]);
    i := i+1;
   );
  )

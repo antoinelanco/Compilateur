@@ -14,68 +14,27 @@ main:
 	addi $sp, $sp, 0
 	move $t2, $a0
 #_prog_0
-	li $t3, 0
+	li $t3, 65
 #_prog_1
-	li $t1, 4
-	li $t0, 4
-	mul $t0, $t1, $t0
-	addi $a0, $t0, 4
-	li $v0, 9
-	syscall
-	sw $a0, 0($v0)
-	move $t2, $v0
-#_prog_2
-#_prog_3
-	li $t0, 0
-	li $t1, 4
-	mul $t1, $t0, $t1
-	add $t0, $t2, $t1
-	li $t1, 80
-	sw $t1, 4($t0)
-#_prog_4
-	li $t0, 1
-	li $t1, 4
-	mul $t1, $t0, $t1
-	add $t0, $t2, $t1
-	li $t1, 85
-	sw $t1, 4($t0)
-#_prog_5
-	li $t0, 2
-	li $t1, 4
-	mul $t1, $t0, $t1
-	add $t0, $t2, $t1
-	li $t1, 84
-	sw $t1, 4($t0)
-#_prog_6
-	li $t0, 3
-	li $t1, 4
-	mul $t1, $t0, $t1
-	add $t0, $t2, $t1
-	li $t1, 69
-	sw $t1, 4($t0)
-#_prog_7
 	b _label_1
 #_label_2
 _label_2:
-#_prog_9
-	li $t1, 4
-	mul $t1, $t3, $t1
-	add $t0, $t2, $t1
-	lw $t4, 4($t0)
-#_prog_10
-	move $a0, $t4
+#_prog_3
+	move $a0, $t3
 	li $v0, 11
 	syscall
-#_prog_11
+#_prog_4
 	li $t1, 1
 	add $t3, $t3, $t1
-#_prog_12
+#_prog_5
 #_label_1
 _label_1:
-#_prog_14
-	li $t1, 4
-	slt $t4, $t3, $t1
-#_prog_15
+#_prog_7
+	li $t1, 65
+	add $t4, $t2, $t1
+#_prog_8
+	slt $t4, $t3, $t4
+#_prog_9
 	bnez $t4, _label_2
 	lw $ra, 0($fp)
 	lw $fp, 4($fp)

@@ -1,22 +1,38 @@
-(* Syntaxe abstraite non typée *)
-(* Cette version est obtenu en retirant tous les indications de typage *)
+
 module Symb_Tbl = SourceAst.Symb_Tbl
 
 type identifier_info = SourceAst.identifier_kind
+type binop = SourceAst.binop
+type block = instruction list
 
-type expression  = SourceAst.expression
-type location    = SourceAst.location
-type block       = SourceAst.block
-type instruction = SourceAst.instruction
-type literal     = SourceAst.literal
-type binop       = SourceAst.binop
-type call        = SourceAst.call
+and instruction =
+  | Print of expression
+  | Set   of location   * expression    (* Affectation *)
+  | While of expression * block         (* Boucle      *)
+  | If    of expression * block * block (* Branchement *)
+  | ProcCall of call
 
-(* Programme principal : une table de symboles et un bloc de code *)
-type function_info = {
+and expression =
+  | Literal   of literal      (* Valeur immédiate   *)
+  | Location  of location   (* Valeur en mémoire  *)
+  | Binop     of binop * expression * expression (* Opération binaire  *)
+  | FunCall   of call
+  | NewArray  of expression
+  | NewArrayAcol of expression list
+  (*| NewDirectArray of expression * expression list*)
+and location =
+  | Identifier of string
+  | ArrayAccess of expression * expression
+and literal =
+  | Int  of int  (* Constante entière   *)
+  | Bool of bool
+
+and call = string * expression list
+
+and function_info = {
   formals: string list;
-  locals: identifier_info Symb_Tbl.t;
-  code:   block;
+  locals:  identifier_info Symb_Tbl.t;
+  code:    block
 }
 
 and prog = function_info Symb_Tbl.t

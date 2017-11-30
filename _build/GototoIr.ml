@@ -85,7 +85,7 @@ let flatten_func p =
          let i = new_tmp() in
          ce1 @ ce2 @ [ T.Load(i,(ve1,ve2)) ], T.Identifier(i))
 
-    | NewArray(e,t) ->
+    | NewArray(e) ->
       let ce,ve = flatten_expression e in
       let i = new_tmp() in
       ce @ [ T.New(i,ve) ], T.Identifier(i)

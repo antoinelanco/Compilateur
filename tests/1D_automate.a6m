@@ -1,0 +1,93 @@
+main(integer x) (
+  var []integer regle;
+  var []integer curr_line;
+  var integer max_line;
+  var integer max_width;
+
+  regle := make_regle(x);
+
+  max_line := 50;
+  max_width := 70;
+
+  curr_line := [max_width]integer;
+
+  curr_line[max_width / 2 - 1] := 1;
+  curr_line[max_width / 2] := 1;
+  curr_line[max_width / 2 + 1] := 1;
+
+  while (max_line > 0) (
+    print_line(curr_line, max_width);
+    print(10);
+    curr_line := update(regle, curr_line, max_width);
+    max_line--;
+  );
+)
+
+print_line([]integer line, integer length) (
+  var integer i;
+
+  for(i := 0; i < length; i:=i+1) (
+    if ( line[i] == 1 ) (
+      print(35);
+      print(35);
+    ) else (
+      print(32);
+      print(32);
+    );
+  );
+)
+
+[]integer make_regle(integer i) (
+  var integer j;
+  var integer tmp;
+  var []integer tab;
+
+  tab := [8]integer;
+
+  for (j := 0; j < 8; j:=j+1) (
+    tmp := i / 2;
+    tab[j] := i - tmp * 2;
+    i := tmp;
+  );
+
+  result := tab;
+)
+
+[]integer update([]integer regle, []integer line, integer length) (
+  var []integer tmp;
+  var integer i;
+
+  tmp := [length]integer;
+
+  for (i := 0; i < length; i:=i+1) (
+    tmp[i] := update_state(regle, line, length, i);
+  );
+
+  result := tmp;
+)
+
+integer update_state([]integer regle, []integer line, integer length, integer i) (
+  var integer tmp;
+
+  tmp := line[get_right(line, i, length)]
+    + 2 * line[i]
+    + 2 * 2 * line[get_left(line, i, length)];
+
+  result := regle[tmp];
+)
+
+integer get_right([]integer line, integer i, integer length) (
+  if ( i == 0 ) (
+		result := length - 1;
+	) else (
+		result := i - 1;
+	);
+)
+
+integer get_left([]integer line, integer i, integer length) (
+  if (i == length - 1) (
+		result := 0;
+	) else (
+		result := i + 1;
+	);
+)

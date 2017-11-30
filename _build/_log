@@ -75,14 +75,18 @@ ocamlfind ocamldep -modules SourceParser.mli > SourceParser.mli.depends # cached
 ocamlfind ocamlc -c -w -40 -o SourceParser.cmi SourceParser.mli # cached
 # Target: SourceLexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceLexer.cmo, file:SourceLexer.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -w -40 -o SourceLexer.cmo SourceLexer.ml # cached
-# Target: SourceTypeChecker.ml.depends, tags: { extension:ml, file:SourceTypeChecker.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -modules SourceTypeChecker.ml > SourceTypeChecker.ml.depends # cached
-# Target: SourceTypeChecker.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceTypeChecker.cmo, file:SourceTypeChecker.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -w -40 -o SourceTypeChecker.cmo SourceTypeChecker.ml # cached
-# Target: SourcetoUntyped.ml.depends, tags: { extension:ml, file:SourcetoUntyped.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -modules SourcetoUntyped.ml > SourcetoUntyped.ml.depends # cached
-# Target: SourcetoUntyped.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourcetoUntyped.cmo, file:SourcetoUntyped.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -w -40 -o SourcetoUntyped.cmo SourcetoUntyped.ml # cached
+# Target: SourcetoTyped.ml.depends, tags: { extension:ml, file:SourcetoTyped.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules SourcetoTyped.ml > SourcetoTyped.ml.depends # cached
+# Target: TypedAst.ml.depends, tags: { extension:ml, file:TypedAst.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules TypedAst.ml > TypedAst.ml.depends # cached
+# Target: TypedAst.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TypedAst.cmo, file:TypedAst.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o TypedAst.cmo TypedAst.ml # cached
+# Target: SourcetoTyped.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourcetoTyped.cmo, file:SourcetoTyped.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o SourcetoTyped.cmo SourcetoTyped.ml # cached
+# Target: TypedtoUntyped.ml.depends, tags: { extension:ml, file:TypedtoUntyped.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -modules TypedtoUntyped.ml > TypedtoUntyped.ml.depends # cached
+# Target: TypedtoUntyped.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:TypedtoUntyped.cmo, file:TypedtoUntyped.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -w -40 -o TypedtoUntyped.cmo TypedtoUntyped.ml # cached
 # Target: UntypedtoGoto.ml.depends, tags: { extension:ml, file:UntypedtoGoto.ml, ocaml, ocamldep, quiet, traverse }
 ocamlfind ocamldep -modules UntypedtoGoto.ml > UntypedtoGoto.ml.depends # cached
 # Target: UntypedtoGoto.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:UntypedtoGoto.cmo, file:UntypedtoGoto.ml, implem, ocaml, quiet, traverse }
@@ -98,5 +102,5 @@ ocamlfind ocamlc -c -w -40 -o Mips.cmo Mips.ml
 # Target: SourceParser.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SourceParser.cmo, file:SourceParser.ml, implem, ocaml, quiet, traverse }
 ocamlfind ocamlc -c -w -40 -o SourceParser.cmo SourceParser.ml
 # Target: Main.byte, tags: { byte, dont_link_with, extension:byte, file:Main.byte, link, ocaml, program, quiet, traverse }
-ocamlfind ocamlc -linkpkg SourceAst.cmo UntypedAst.cmo GotoAst.cmo IrAst.cmo AllocatedAst.cmo Mips.cmo AllocatedtoMips.cmo GototoIr.cmo IrLiveness.cmo IrDeadCodeElim.cmo Graph.cmo GraphColoring.cmo IrInterferenceGraph.cmo IrtoAllocated.cmo SourceInterpreter.cmo SourceParser.cmo SourceLexer.cmo SourceTypeChecker.cmo SourcetoUntyped.cmo UntypedtoGoto.cmo Main.cmo -o Main.byte
+ocamlfind ocamlc -linkpkg SourceAst.cmo UntypedAst.cmo GotoAst.cmo IrAst.cmo AllocatedAst.cmo Mips.cmo AllocatedtoMips.cmo GototoIr.cmo IrLiveness.cmo IrDeadCodeElim.cmo Graph.cmo GraphColoring.cmo IrInterferenceGraph.cmo IrtoAllocated.cmo SourceInterpreter.cmo SourceParser.cmo SourceLexer.cmo TypedAst.cmo SourcetoTyped.cmo TypedtoUntyped.cmo UntypedtoGoto.cmo Main.cmo -o Main.byte
 # Compilation successful.

@@ -355,7 +355,7 @@ let init =
   @@ jal "atoi"
   @@ move a0 v0
   (*@@ sw v0 0 sp*)
-  @@ jal "main"
+  @@ jal "main_integer"
 
 let close = li v0 10 @@ syscall
 

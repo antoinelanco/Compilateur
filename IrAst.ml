@@ -64,5 +64,9 @@ and print_instruction = function
   | Comment(c)       -> sprintf "# %s" c
 
 and print_value = function
-  | Literal(lit)   -> SourceAst.print_literal lit
+  | Literal(lit)   -> print_literal lit
   | Identifier(id) -> id
+
+and print_literal = function
+  | Int i -> sprintf "%d" i
+  | Bool b -> if b then "true" else "false"

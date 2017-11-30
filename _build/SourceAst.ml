@@ -73,7 +73,8 @@ open Printf
 let rec print_typ = function
   | TypInteger -> "integer"
   | TypBoolean -> "boolean"
-  | TypArray t -> sprintf "tableau de %s" (print_typ t)
+  | TypArray t -> sprintf "tableau_de_%s" (print_typ t)
+
 let print_identifier_info i = print_typ i.typ
 
 let print_symb_tbl tbl =
