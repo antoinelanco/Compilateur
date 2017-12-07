@@ -8,7 +8,11 @@ module Symb_Tbl = Map.Make(String)
    code: block;
    } *)
 
-type prog = function_info Symb_Tbl.t
+type prog = {
+  functions : function_info Symb_Tbl.t;
+  structs : struct_info Symb_Tbl.t
+}
+and struct_info = (string * typ) list
 
 and function_info = {
   return:  typ option;
@@ -16,6 +20,8 @@ and function_info = {
   locals:  identifier_info Symb_Tbl.t;
   code:    block
 }
+
+and f_access = expression * string
 
 and call = string * expression list
 
@@ -29,6 +35,7 @@ and identifier_kind =
   | Return
 and identifier_info = { typ: typ; kind: identifier_kind }
 and typ =
+  | TypStruct of string
   | TypInteger
   | TypBoolean
   | TypArray of typ
@@ -36,6 +43,8 @@ and typ =
 (* Un bloc de code est une liste d'instructions *)
 and block = (Lexing.position * instruction) list
 and instruction =
+  | Throw
+  | Try       of block * block
   | ProcCall  of call
   | Set       of location   * expression    (* Affectation *)
   | While     of expression * block         (* Boucle      *)
@@ -43,6 +52,7 @@ and instruction =
   | Print     of expression                 (* Affichage   *)
 
 and expression =
+  | NewRecord of string
   | FunCall   of call
   | Literal   of literal                         (* Valeur immédiate   *)
   | Location  of location                        (* Valeur en mémoire  *)
@@ -55,6 +65,7 @@ and literal =
   | Bool of bool (* Constante booléenne *)
 
 and location =
+  | FieldAccess of f_access
   | ArrayAccess of expression * expression
   | Identifier  of string (* Variable en mémoire *)
 
@@ -74,6 +85,7 @@ let rec print_typ = function
   | TypInteger -> "integer"
   | TypBoolean -> "boolean"
   | TypArray t -> sprintf "tableau_de_%s" (print_typ t)
+  | TypStruct n -> sprintf "struct_de_%s" n
 
 let print_identifier_info i = print_typ i.typ
 
@@ -82,13 +94,14 @@ let print_symb_tbl tbl =
       (sprintf "  var %s %s;\n" (print_identifier_info i) v) ^ s
     ) tbl ""
 
-let print_literal = function
+let rec print_literal = function
   | Int i -> sprintf "%d" i
   | Bool b -> if b then "true" else "false"
-let print_location = function
+and print_location = function
   | Identifier x -> x
-  | ArrayAccess (id,e) -> ""
-let print_binop = function
+  | FieldAccess (e,id) -> sprintf "%s.%s" (print_expression e) id
+  | ArrayAccess (id,e) -> sprintf "%s[%s]" (print_expression id) (print_expression e)
+and print_binop = function
   | Add  -> "+"
   | Mult -> "*"
   | Sub  -> "-"
@@ -101,7 +114,8 @@ let print_binop = function
   | Me   -> ">="
   | And  -> "&&"
   | Or   -> "||"
-let rec print_expression = function
+and print_expression = function
+  | NewRecord(id) -> sprintf "new struct %s" id
   | NewArrayAcol(es) -> let var_tab = List.fold_left (fun acc i -> (print_expression i)^"; "^acc) "" es in
     sprintf "Creation d'un tableau : {"^var_tab^"}"
   | NewArray(e, t) -> sprintf "Creation d'un tableau de %s de taille %s" (print_typ t) (print_expression e)

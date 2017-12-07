@@ -61,6 +61,33 @@ main_integer:
 	addi $sp, $sp, 0
 	move $t2, $a0
 #_prog_0
+	li $t1, 2
+	li $t0, 4
+	mul $t0, $t1, $t0
+	addi $a0, $t0, 4
+	li $v0, 9
+	syscall
+	sw $a0, 0($v0)
+	move $t3, $v0
+#_prog_1
+#_prog_2
+	li $t0, 0
+	li $t1, 4
+	mul $t1, $t0, $t1
+	add $t0, $t3, $t1
+	li $t1, 70
+	sw $t1, 4($t0)
+#_prog_3
+	li $t0, 0
+	li $t1, 4
+	mul $t1, $t0, $t1
+	add $t0, $t3, $t1
+	lw $t3, 4($t0)
+#_prog_4
+	move $a0, $t3
+	li $v0, 11
+	syscall
+#_prog_5
 	li $t0, 4
 	mul $t0, $t2, $t0
 	addi $a0, $t0, 4
@@ -68,22 +95,22 @@ main_integer:
 	syscall
 	sw $a0, 0($v0)
 	move $t3, $v0
-#_prog_1
+#_prog_6
 	move $t2, $t3
-#_prog_2
+#_prog_7
 	li $t0, 0
 	li $t1, 4
 	mul $t1, $t0, $t1
 	add $t0, $t2, $t1
 	li $t1, 65
 	sw $t1, 4($t0)
-#_prog_3
+#_prog_8
 	li $t0, 0
 	li $t1, 4
 	mul $t1, $t0, $t1
 	add $t0, $t2, $t1
 	lw $t2, 4($t0)
-#_prog_4
+#_prog_9
 	sw $t2, -4($sp)
 	sw $t3, -8($sp)
 	addi $sp, $sp, -8
@@ -94,7 +121,7 @@ main_integer:
 	addi $sp, $sp, 8
 	lw $t2, -4($sp)
 	lw $t3, -8($sp)
-#_prog_5
+#_prog_10
 	sw $t2, -4($sp)
 	sw $t3, -8($sp)
 	addi $sp, $sp, -8

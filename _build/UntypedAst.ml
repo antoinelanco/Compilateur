@@ -19,7 +19,6 @@ and expression =
   | FunCall   of call
   | NewArray  of expression
   | NewArrayAcol of expression list
-  (*| NewDirectArray of expression * expression list*)
 and location =
   | Identifier of string
   | ArrayAccess of expression * expression

@@ -29,7 +29,7 @@ let typecheck_func p tab =
           str cc
       in
 
-      let _ = S.Symb_Tbl.find new_str tab in
+      let _ = S.Symb_Tbl.find new_str tab.S.functions in
 
       [T.ProcCall({annot = None; elt = (new_str,cc) })]
 
@@ -59,6 +59,10 @@ let typecheck_func p tab =
 
 
   and type_expression pos = function
+    | S.NewRecord(id) ->
+      let _ = S.Symb_Tbl.find id tab.structs in
+      {annot = TypStruct(id); elt = T.NewRecord(id)}
+
     | S.NewArray(e,t) -> let ee = type_expression pos e in
       comparetype pos TypInteger ee.T.annot;
       {annot = t ;elt = T.NewArray(ee,t)}
@@ -103,7 +107,7 @@ let typecheck_func p tab =
           str cc
       in
 
-      let infos = S.Symb_Tbl.find new_str tab in
+      let infos = S.Symb_Tbl.find new_str tab.functions in
 
       match infos.S.return with
       | Some t -> {annot=t; elt=T.FunCall({annot = Some t; elt = (new_str,cc) })}
@@ -114,8 +118,17 @@ let typecheck_func p tab =
     | Bool b -> TypBoolean
 
   and type_location pos = function
-    | S.Identifier id -> {annot=(S.Symb_Tbl.find id symb_tbl).typ; elt=T.Identifier(id)}
+    | S.FieldAccess(e,id) ->
+      let ee = type_expression pos e in
+      (match ee.annot with
+       | TypStruct n ->
+         let fiel = S.Symb_Tbl.find n tab.structs in
+         let ty = List.assoc id fiel in
+         { annot = ty; elt = T.FieldAccess(ee,id)}
+       | _ -> failwith "TypStruct n exepcted")
 
+    | S.Identifier id ->
+      {annot=(S.Symb_Tbl.find id symb_tbl).typ; elt=T.Identifier(id)}
     | S.ArrayAccess(e1,e2) ->
       let ee1 = type_expression pos e1 in
       let ee2 = type_expression pos e2 in
@@ -124,8 +137,7 @@ let typecheck_func p tab =
        | T.Location i ->
          (match i.T.annot with
           | TypArray n -> {annot=n; elt=T.ArrayAccess(ee1,ee2)}
-          | TypInteger -> {annot=TypArray TypInteger; elt=T.ArrayAccess(ee1,ee2)}
-          | TypBoolean -> {annot=TypArray TypBoolean; elt=T.ArrayAccess(ee1,ee2)})
+          | _ -> failwith "TypArray n expected")
        | _ -> failwith "loc[int] only (ArrayAccess)")
 
 
@@ -142,5 +154,6 @@ let typecheck_func p tab =
     T.code=(typecheck_block p.S.code) }
 
 let typer p =
-
-  S.Symb_Tbl.fold (fun i info acc -> T.Symb_Tbl.add i (typecheck_func info p) acc) p T.Symb_Tbl.empty
+  {T.functions = S.Symb_Tbl.fold (
+      fun i info acc -> T.Symb_Tbl.add i (typecheck_func info p) acc)
+      p.functions T.Symb_Tbl.empty; T.structs = p.structs}

@@ -4,6 +4,7 @@ module State = Map.Make(String)
 type state = int State.t
 
 let rec eval_main p x =
+  let p = p.functions in 
   let info = Symb_Tbl.find "main" p in
   eval_block (State.singleton "x" x) info.code
 
@@ -59,5 +60,6 @@ and eval_literal env = function
   | Bool(b) -> eval_bool b
 
 and eval_location env = function
+  | FieldAccess(id,e) -> failwith "A completer"
   | Identifier(id) -> State.find id env
   | ArrayAccess(s,e) -> failwith "A completer"

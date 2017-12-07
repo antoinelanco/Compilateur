@@ -10,6 +10,8 @@
     List.iter (fun (s, k) -> Hashtbl.add h s k)
       [	(*"main",     MAIN;*)
         "var",      VAR;
+        "new",      NEW;
+        "struct",   STRUCT;
         "integer",  INT;
         "boolean",  BOOLEAN;
         "while",    WHILE;
@@ -17,6 +19,9 @@
         "to",       TO;
       	"print",    PRINT;
         "if",       IF;
+        "throw",    THROW;
+        "try",      TRY;
+        "catch",    CATCH;
         (*"then",     THEN;*)
         "else",     ELSE;
         "true",     TRUE;
@@ -85,6 +90,8 @@ rule token = parse
       { AND }
   | "||"
       { OR }
+  | "."
+      { DOT }
   | ":="
       { SET }
   | eof

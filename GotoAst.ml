@@ -14,6 +14,8 @@ type label = string
 
 type block = instruction list
 and instruction =
+  | RmHandler
+  | NewHandler of label
   | Set      of location * expression (* Affectation       *)
   | Print    of expression            (* Affichage         *)
   | Label    of label                 (* Point de saut     *)

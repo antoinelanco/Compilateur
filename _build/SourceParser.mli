@@ -3,13 +3,17 @@ exception Error
 type token = 
   | WHILE
   | VAR
+  | TRY
   | TRUE
   | TO
+  | THROW
   | SUB
+  | STRUCT
   | SET
   | SEMI
   | PRINT
   | OR
+  | NEW
   | NEQ
   | MULT
   | MT
@@ -29,9 +33,11 @@ type token =
   | ELSE
   | EB
   | EA
+  | DOT
   | DIV
   | DEC
   | COMMA
+  | CATCH
   | BOOLEAN
   | BEGIN
   | BB

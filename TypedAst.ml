@@ -4,18 +4,24 @@ type identifier_info = SourceAst.identifier_info
 type identifier_kind = SourceAst.identifier_kind
 type literal         = SourceAst.literal
 type binop           = SourceAst.binop
-type prog            = SourceAst.prog
 type typ             = SourceAst.typ
 
-type ('a, 'e) annotated_element = { annot: 'a ; elt:   'e }
+and prog = {
+  functions : function_info Symb_Tbl.t;
+  structs : struct_info Symb_Tbl.t
+}
+and struct_info = (string * typ) list
+
+and ('a, 'e) annotated_element = { annot: 'a ; elt:   'e }
+
 
 and typed_expression =  (typ, expression) annotated_element
 and typed_location   =  (typ, location) annotated_element
 and typed_call       = (typ option, call) annotated_element
 
 and call = string * typed_expression list
-
 and block = instruction list
+and f_access = typed_expression * string
 
 and function_info = {
   return:  typ option;
@@ -32,6 +38,7 @@ and instruction =
   | Print     of typed_expression                 (* Affichage   *)
 
 and expression =
+  | NewRecord of string
   | FunCall   of typed_call
   | Literal   of literal                         (* Valeur immédiate   *)
   | Location  of typed_location                        (* Valeur en mémoire  *)
@@ -40,5 +47,6 @@ and expression =
   | NewArrayAcol of typed_expression list
 
 and location =
+  | FieldAccess of f_access
   | ArrayAccess of typed_expression * typed_expression
   | Identifier  of string (* Variable en mémoire *)

@@ -19,6 +19,8 @@
 %token ADD MULT SUB DIV EQ NEQ LT LE MT ME AND OR SET
 %token EOF
 %token BB EB BA EA
+%token NEW STRUCT DOT
+%token CATCH TRY THROW
 
 
 %left AND OR
@@ -26,6 +28,7 @@
 %left ADD SUB
 %left MULT DIV
 %left BB
+%left DOT
 
 /*%start main
 %type <SourceAst.main> main*/
@@ -54,19 +57,39 @@
 ;*/
 
 
-
 prog:
-| (* empty *) EOF { Symb_Tbl.empty }
-| fs=fun_decl; p=prog
+| s=structs; p=progs; EOF
+  { {functions = p; structs = s} }
+
+progs:
+| (* empty *) { Symb_Tbl.empty }
+| fs=fun_decl; p=progs
     {
       let (id, infos) = fs in
       Symb_Tbl.add id infos p
     }
 
+structs:
+| (* empty *) { Symb_Tbl.empty }
+| st=struct_decl; sts=structs
+  {
+    let (id,infos) = st in
+    Symb_Tbl.add id infos sts
+  }
+
+
+struct_decl:
+| STRUCT; id=IDENT; BEGIN; fds=separated_list(SEMI, field_decl); END
+  {id,fds}
+
+field_decl:
+| t=typs id=IDENT {(id,t)}
+
 typs:
 | INT { TypInteger }
 | BOOLEAN { TypBoolean }
 | BB; EB; t=typs { TypArray(t) }
+| BEGIN; id=IDENT; END { TypStruct(id) }
 
 var_decls:
 | (* empty *) { Symb_Tbl.empty }
@@ -148,6 +171,10 @@ instructions:
 | i=instruction; SEMI; is=instructions    { i @ is }
 
 instruction:
+| THROW
+  { [($startpos,Throw)] }
+| TRY; BEGIN; is1=instructions; END; CATCH; BEGIN; is2=instructions; END
+  { [($startpos,Try(is1,is2))] }
 | c=call
   { [($startpos,ProcCall(c))] }
 | PRINT; BEGIN; e=expression; END
@@ -188,6 +215,7 @@ set_direct:
 
 expression:
 | c=call { FunCall(c) }
+| NEW; id=IDENT; BEGIN; END { NewRecord(id) }
 | BA; es=separated_list(SEMI, expression); EA { NewArrayAcol(es) }
 | BB; e=expression; EB; t=typs { NewArray(e,TypArray t) }
 | loc=location { Location(loc) }
@@ -200,6 +228,7 @@ literal:
 | FALSE { Bool false }
 
 location:
+| e=expression; DOT; id=IDENT { FieldAccess(e,id) }
 | id=IDENT { Identifier(id) }
 | e1=expression; BB; e=expression; EB { ArrayAccess(e1,e) }
 
