@@ -31,6 +31,8 @@ and function_info = {
 }
 
 and instruction =
+  | Throw
+  | Try       of block * block 
   | ProcCall  of typed_call
   | Set       of typed_location   * typed_expression    (* Affectation *)
   | While     of typed_expression * block         (* Boucle      *)

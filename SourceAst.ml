@@ -129,6 +129,10 @@ let rec print_block o = function
   | [] -> ""
   | (pos,i)::b -> (offset o) ^ (print_instruction pos o i) ^ ";\n" ^ (print_block o b)
 and print_instruction pos o = function
+  | Throw -> "Throw"
+  | Try(b1,b2) -> sprintf "Try (\n%s%s) Catch (\n%s%s)"
+                    (print_block (o+1) b1) (offset o)
+                    (print_block (o+1) b2) (offset o)
   | ProcCall(s,el) -> sprintf "%s(args)" s (*A completer*)
   | Set(id, e) -> sprintf "%s := %s" (print_location id) (print_expression e)
   | While(e, b) ->

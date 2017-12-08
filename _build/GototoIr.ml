@@ -34,6 +34,9 @@ let flatten_func p =
 
   (* flatten_instruction: S.instruction -> T.instruction list *)
   and flatten_instruction = function
+    | S.Throw -> [ T.Throw ]
+    | S.NewHandler(l) -> [ T.NewHandler(l) ]
+    | S.RmHandler -> [ T.RmHandler ]
     | S.ProcCall(c) -> let str,args = c in
       let (es, vs) = List.fold_left (fun (es_acc, vs_acc) arg ->
           let (c,v) = flatten_expression arg in (es_acc@c,vs_acc@[v])) ([], []) args in

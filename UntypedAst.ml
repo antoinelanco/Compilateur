@@ -6,6 +6,8 @@ type binop = SourceAst.binop
 type block = instruction list
 
 and instruction =
+  | Throw
+  | Try   of block * block 
   | Print of expression
   | Set   of location   * expression    (* Affectation *)
   | While of expression * block         (* Boucle      *)

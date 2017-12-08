@@ -19,8 +19,15 @@ let typecheck_func p tab =
 
 
   and typecheck_instruction pos = function
-    | S.ProcCall(c) -> let str, el = c in
+    | S.Throw -> [ T.Throw ]
 
+    | S.Try(b1,b2) ->
+      let bb1 = typecheck_block b1 in
+      let bb2 = typecheck_block b2 in
+      [ T.Try(bb1,bb2) ]
+
+    | S.ProcCall(c) ->
+      let str, el = c in
       let cc = List.fold_left (fun acc e ->
           acc @ [type_expression pos e] ) [] el in
 
@@ -155,5 +162,5 @@ let typecheck_func p tab =
 
 let typer p =
   {T.functions = S.Symb_Tbl.fold (
-      fun i info acc -> T.Symb_Tbl.add i (typecheck_func info p) acc)
-      p.functions T.Symb_Tbl.empty; T.structs = p.structs}
+       fun i info acc -> T.Symb_Tbl.add i (typecheck_func info p) acc)
+       p.functions T.Symb_Tbl.empty; T.structs = p.structs}

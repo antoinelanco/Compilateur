@@ -66,8 +66,19 @@ let generate_fun p =
 
 
   and generate_instr : AllocatedAst.instruction -> 'a Mips.asm = function
-    | FunCall(i,s,v) ->
+    | Throw -> lw ~$t0 4 s0 @@ jr ~$t0
+    | RmHandler -> lw ~$t0 0 ~$s0 @@ move ~$s0 ~$t0
+    | NewHandler(l) ->
+      li ~$a0 8
+      @@ li ~$v0 9
+      @@ syscall
+      @@ la ~$t0 l
+      @@ sw ~$t0 4 ~$v0
+      @@ lw ~$t0 0 ~$s0
+      @@ sw ~$t0 0 ~$v0
+      @@ move ~$s0 ~$v0
 
+    | FunCall(i,s,v) ->
       let stack_args = ref 0 in
 
       let save_args, nb = List.fold_left (fun (acc,i) e ->
@@ -354,8 +365,14 @@ let init =
   @@ lw a0 0 a1
   @@ jal "atoi"
   @@ move a0 v0
-  (*@@ sw v0 0 sp*)
+  @@ li ~$a0 8
+  @@ li ~$v0 9
+  @@ syscall
+  @@ la ~$t0 "gestion_catch"
+  @@ sw ~$t0 4 ~$v0
+  @@ move ~$s0 ~$v0
   @@ jal "main_integer"
+  @@ label "gestion_catch"
 
 let close = li v0 10 @@ syscall
 

@@ -5,9 +5,9 @@ open Printf
 exception Failure of string
 
 let rec find_struct x lst =
-    match lst with
-    | [] -> raise (Failure "Not Found")
-    | (h,_) :: t -> if x = h then 0 else 1 + find_struct x t
+  match lst with
+  | [] -> raise (Failure "Not Found")
+  | (h,_) :: t -> if x = h then 0 else 1 + find_struct x t
 
 
 let erase_identifier_info i = i.SourceAst.kind
@@ -15,6 +15,11 @@ let rec untyper_block structs b = List.fold_left
     (fun acc i -> acc @ [(untyper_instruction structs i)] ) [] b
 
 and untyper_instruction structs = function
+  | S.Throw -> T.Throw
+  | S.Try(b1,b2) ->
+    let bb1 = untyper_block structs b1 in
+    let bb2 = untyper_block structs b2 in
+    T.Try(bb1,bb2)
   | S.ProcCall(c) ->
     let c = c.elt in
     let str, el = c in
@@ -73,11 +78,11 @@ and untyper_location structs l = match l.elt with
   | S.FieldAccess(e,id) ->
     let ee = untyper_expression structs e in
     (match e.annot with
-    | TypStruct n ->
-      let tabb = S.Symb_Tbl.find n structs in
-      let index = find_struct id tabb in
-      T.ArrayAccess(ee,Literal(Int(index)))
-    | _ -> failwith "TypStruct n")
+     | TypStruct n ->
+       let tabb = S.Symb_Tbl.find n structs in
+       let index = find_struct id tabb in
+       T.ArrayAccess(ee,Literal(Int(index)))
+     | _ -> failwith "TypStruct n")
 
   | S.Identifier(id) -> T.Identifier(id)
   | S.ArrayAccess(e1,e2) ->

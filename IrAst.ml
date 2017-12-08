@@ -21,18 +21,21 @@ and access = value * value
 
 and block = (label * instruction) list
 and instruction =
-  | Value    of identifier * value                 (* Chargement d'une valeur *)
-  | Binop    of identifier * binop * value * value (* Opération binaire       *)
-  | Print    of value                              (* Affichage               *)
-  | Label    of label                              (* Point de saut           *)
-  | Goto     of label                              (* Saut                    *)
-  | CondGoto of value * label                      (* Saut conditionnel       *)
-  | Comment  of string                             (* Commentaire             *)
-  | FunCall  of identifier * string * value list
-  | ProcCall of string * value list
-  | Load     of identifier * access
-  | Store    of access * value
-  | New      of identifier * value
+  | Throw
+  | RmHandler
+  | NewHandler of label
+  | Value      of identifier * value                 (* Chargement d'une valeur *)
+  | Binop      of identifier * binop * value * value (* Opération binaire       *)
+  | Print      of value                              (* Affichage               *)
+  | Label      of label                              (* Point de saut           *)
+  | Goto       of label                              (* Saut                    *)
+  | CondGoto   of value * label                      (* Saut conditionnel       *)
+  | Comment    of string                             (* Commentaire             *)
+  | FunCall    of identifier * string * value list
+  | ProcCall   of string * value list
+  | Load       of identifier * access
+  | Store      of access * value
+  | New        of identifier * value
 
 
 and identifier = string (* Identifiant d'un registre virtuel *)
@@ -49,6 +52,9 @@ let rec print_block = function
   | (l, i) :: b -> sprintf "%s: %s\n%s" l (print_instruction i) (print_block b)
 
 and print_instruction = function
+  | Throw -> "throw"
+  | RmHandler -> "RmHandler"
+  | NewHandler(_) -> "NewHandler"
   | Load(i,(v1,v2)) -> sprintf "%s <- %s[%s]" i (print_value v1) (print_value v2)
   | Store((v1,v2),v)-> sprintf "%s[%s] <- %s" (print_value v1) (print_value v2) (print_value v)
   | New(i,v)        -> sprintf "%s[%s]" i (print_value v)

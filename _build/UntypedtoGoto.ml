@@ -23,6 +23,18 @@ let destructure_func p =
 
   (* destructure_instruction: S.instruction -> T.block *)
   and destructure_instruction : S.instruction -> T.block = function
+    | Throw -> [ T.Throw ]
+    | Try(b1,b2) ->
+      let i = new_label() in
+      let j = new_label() in
+      [ T.NewHandler(i) ] @
+      ( destructure_block b1 ) @
+      [ T.RmHandler ] @
+      [ T.Goto(j) ] @
+      [ T.Label(i) ] @
+      [ T.RmHandler ] @
+      ( destructure_block b2) @
+      [ T.Label(j) ]
     | ProcCall(c) -> [ T.ProcCall(c) ]
     | Print(e)  -> [ T.Print(e)  ]
     | Set(l, e) -> [ T.Set(l,e) ]
