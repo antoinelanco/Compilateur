@@ -370,6 +370,7 @@ let init =
   @@ syscall
   @@ la ~$t0 "gestion_catch"
   @@ sw ~$t0 4 ~$v0
+  @@ sw ~$v0 0 ~$v0
   @@ move ~$s0 ~$v0
   @@ jal "main_integer"
   @@ label "gestion_catch"

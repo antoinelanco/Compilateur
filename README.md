@@ -61,16 +61,61 @@
   #### TP8)
   - Travail attendu
 
+ ### Acte III
+  #### TP9)
+  - 1 Représentation intermédiaire annotée
+    - 1.1 Définition
+    - 1.2 Constructeurs  
+    - 1.3 Insertion dans le compilateur
+    - 1.4 Travail attendu
+  - 2 Surcharge résolue statiquement
+   - 2.1 Description
+   - 2.2 Stratégie d'implémentation
+   - 2.3 Travail attendu
+  - 3 Extensions
+    - 3.1 Améliorer les messages d'erreur
+
+  #### TP9bis)
+  - 1 Description
+    - 1.1 Extension du langage source
+      - 1.1.1 Lexique  
+      - 1.1.2 Grammaire
+      - 1.1.3 Sémantique
+    - 1.2 Extension du compilateur
+      - 1.2.1 Conventions
+      - 1.2.2 Syntaxes abstraites
+  - 2 Travail à effectuer
+
+  #### TP10)
+  - 1 Description
+    - 1.1 Extension du langage source
+      - 1.1.1 Lexique
+      - 1.1.2 Grammaire
+      - 1.1.3 Sémantique
+    - 1.2 Extension du compilateur
+      - 1.2.1 Syntaxes abstraites  
+      - 1.2.2 Représentations  
+  - 2 Travail attendu
+
+
 
  ## Info sup :
 
- https://github.com/antoinelanco/Compilateur <br>
- https://www.lri.fr/~blsk/Compilation/
 
- Dans certain cas en mode full stack on a une erreur stack overflow mais avec le parametre -O ca marche toujours
+ Github -> https://github.com/antoinelanco/Compilateur <br>
+ Source Projet -> https://www.lri.fr/~blsk/Compilation/
 
+ Dans certain cas en mode full stack on a une erreur <br> stack overflow mais avec le parametre -O ca marche toujours.
+
+ Donc il faut compiler les programmes A6000 avec le parametre -O
+
+ 
+  - Pour le TP9bis le throw dois etre dans <br> la meme fonction que le try/catch sinon erreur
   - Incrementation (++)
   - Decrementation (--)
   - Divition (/)
   - More than (>)
   - More Equal (>=)
+
+
+Professeur : Thibaut Balabonski -> https://www.lri.fr/~blsk/

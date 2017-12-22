@@ -4,19 +4,15 @@ main(integer x) (
   var []integer i;
   var (ty) b;
 
-  try(
-    b := new ty();
-    b.c := 70;
-    print(b.c);
-    throw;
-    i := [x]integer;
-    i[0] := 60+5;
-    fun(i[0]);
-    fun(50,60);
-  )catch(
-    throw;
-    print(65);
-  );
+  b := new ty();
+  b.c := 70;
+  print(b.c);
+  throw;
+  i := [x]integer;
+  i[0] := 60+5;
+  fun(i[0]);
+  fun(50,60);
+
 
 )
 
